@@ -1726,7 +1726,7 @@ public class Pexeso_GUI extends javax.swing.JFrame {
         loaded_games = null;
         loadGameBox.removeAllItems();
         LoadGame.setVisible(false);
-        comm.exit = true;
+        comm.setExit(true);
         comm.closeSocket();
         
         panel1.setVisible(true);
@@ -1754,7 +1754,7 @@ public class Pexeso_GUI extends javax.swing.JFrame {
             panel2.setVisible(false);
             panel3.setVisible(true);
             
-            comm.exit = false;
+            comm.setExit(false);
             t1 = new Thread(comm); 
             t1.start();
             
@@ -1768,7 +1768,7 @@ public class Pexeso_GUI extends javax.swing.JFrame {
 
     private void GameExitMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_GameExitMouseClicked
         comm.closeSocket();
-        comm.exit = true;
+        comm.setExit(true);
         System.exit(0);
     }//GEN-LAST:event_GameExitMouseClicked
 
@@ -2026,7 +2026,7 @@ public class Pexeso_GUI extends javax.swing.JFrame {
 
     private void LeaveGameMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_LeaveGameMouseClicked
         CurrentGame = null;
-        comm.exit = true;
+        comm.setExit(true);
         
         LobbyStatus.setText("You left your current game");
         LobbyStatus.setVisible(true);        
@@ -2126,7 +2126,7 @@ public class Pexeso_GUI extends javax.swing.JFrame {
             panel3.setVisible(true);
             
             /*thread ralated stuff*/
-            comm.exit = false;
+            comm.setExit(false);
             t1 = new Thread(comm); 
             t1.start();
         }

@@ -5,6 +5,7 @@
  */
 package pexeso_client;
 
+import static java.lang.Thread.sleep;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -24,9 +25,9 @@ public class Communication_model implements Runnable
     private String nick;
     private int msgID;
     private String lastMsg;
-    public String toSend = null;
-    public boolean msgsent = false;
-    public boolean exit = false;
+    private String toSend = null;
+    private boolean msgsent = false;
+    private boolean exit = false;
     private DatagramSocket socket = null ;
     
     private final static int PACKETSIZE = 75;
@@ -48,54 +49,62 @@ public class Communication_model implements Runnable
     @Override
     public void run() 
     {   
-        int temp;
-        while(exit == false)
-        {                
-            if(toSend != null)
+            int temp;
+            try 
             {
-                temp = msgSender(toSend);
-                if(temp == 0)
-                {
-                    toSend = null;
-                    msgsent = true;
+                while(isExit() == false)
+                { 
+                    if(getToSend() != null)
+                    {
+                        temp = msgSender(getToSend());
+                        if(temp == 0)
+                        {
+                            setToSend(null);
+                            setMsgsent(true);
+                        }
+
+                    }
+                    sleep(2000);
+
                 }
-                
+            } 
+            catch (InterruptedException ex) 
+            {
+                    Logger.getLogger(Communication_model.class.getName()).log(Level.SEVERE, null, ex);
             }
-        }
-        
     }
     
     private String listen(int time)
     {  
-        String msg = "";
+        String msg;
         try
-            {
-                 // Construct the datagram packets
+        {
+             // Construct the datagram packets
 
-                 byte [] recvData = new byte[PACKETSIZE];
+             byte [] recvData = new byte[PACKETSIZE];
 
-                 DatagramPacket recvPacket = new DatagramPacket(recvData, recvData.length) ;
+             DatagramPacket recvPacket = new DatagramPacket(recvData, recvData.length) ;
 
-                 // Set a receive timeout, to int time milliseconds
-                 socket.setSoTimeout(time) ;
+             // Set a receive timeout, to int time milliseconds
+             socket.setSoTimeout(time) ;
 
-                 // Prepare the packet for receive
-                 recvPacket.setData(new byte[PACKETSIZE]) ;
+             // Prepare the packet for receive
+             recvPacket.setData(new byte[PACKETSIZE]) ;
 
-                 // Wait for a response from the server
-                 socket.receive(recvPacket) ;
+             // Wait for a response from the server
+             socket.receive(recvPacket) ;
 
-                 // Print the response
-                 msg = (new String(recvPacket.getData()));
-                 System.out.println(msg);
-                 
-                 if((int)msg.charAt(0)-48 < 2)return "wrong msg ID";
-            }
-            catch( Exception e )
-            {
-               System.out.println(e) ;
-               return "timeout";
-            }
+             // Print the response
+             msg = (new String(recvPacket.getData()));
+             System.out.println(msg);
+
+             if((int)msg.charAt(0)-48 < 2)return "wrong msg ID";
+        }
+        catch( Exception e )
+        {
+           System.out.println(e) ;
+           return "timeout";
+        }
 
         
         return msg;
@@ -247,5 +256,47 @@ public class Communication_model implements Runnable
      */
     public void setLastMsg(String LastMsg) {
         this.lastMsg = LastMsg;
+    }
+
+    /**
+     * @return the toSend
+     */
+    public String getToSend() {
+        return toSend;
+    }
+
+    /**
+     * @return the msgsent
+     */
+    public boolean isMsgsent() {
+        return msgsent;
+    }
+
+    /**
+     * @return the exit
+     */
+    public boolean isExit() {
+        return exit;
+    }
+
+    /**
+     * @param toSend the toSend to set
+     */
+    public synchronized void setToSend(String toSend) {
+        this.toSend = toSend;
+    }
+
+    /**
+     * @param msgsent the msgsent to set
+     */
+    public synchronized void setMsgsent(boolean msgsent) {
+        this.msgsent = msgsent;
+    }
+
+    /**
+     * @param exit the exit to set
+     */
+    public synchronized void setExit(boolean exit) {
+        this.exit = exit;
     }
 }
