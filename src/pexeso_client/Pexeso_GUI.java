@@ -15,6 +15,7 @@ import java.net.UnknownHostException;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.SwingUtilities;
 
 
 /**
@@ -41,11 +42,55 @@ public class Pexeso_GUI extends javax.swing.JFrame {
     public void setIcon(int card_id)
     {
         int card = Pexeso_client.CurrentGame.getCard(card_id);
-        Pexeso_client.CurrentGame.gameCards[card_id].cardLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/pictures/"+card+".jpg")));
+        
+        SwingUtilities.invokeLater(new Runnable() {
+        public void run() {
+
+          Pexeso_client.CurrentGame.gameCards[card_id].cardLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/pictures/"+card+".jpg")));
+        }
+      });
+        
+        
+        
     }
     public void turnCardBack(int card_id)
     {
-        Pexeso_client.CurrentGame.gameCards[card_id].cardLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/pictures/backend.jpg")));
+        
+        SwingUtilities.invokeLater(new Runnable() {
+        public void run() {
+
+          Pexeso_client.CurrentGame.gameCards[card_id].cardLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/pictures/backend.jpg")));
+        }
+      });
+        
+        
+    }
+    public void increaseScore(int player_position)
+    {
+        
+        if(player_position == 1 )
+        {
+            Pexeso_client.CurrentGame.setp1Score(Pexeso_client.CurrentGame.getP1Score()+1);
+            
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+
+                    p1Value.setText(Pexeso_client.CurrentGame.getP1Score()+"");
+                }
+              });
+        }
+        else if(player_position == 2 )
+        {
+            Pexeso_client.CurrentGame.setp2Score(Pexeso_client.CurrentGame.getP2Score()+1);
+            
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+
+                    p2Value.setText(Pexeso_client.CurrentGame.getP2Score()+"");
+                }
+              });
+        }
+        
     }
     
     private void GameCardClicked(int card_id)
@@ -62,8 +107,8 @@ public class Pexeso_GUI extends javax.swing.JFrame {
                     turns[Pexeso_client.CurrentGame.turnCounter] = card_id;
                     Pexeso_client.CurrentGame.turnCounter++;
                     comm.setToSend("m"+(char)(card_id + '0')+""+(char)(Pexeso_client.CurrentGame.getID()+'0')+""+Pexeso_client.CurrentPlayer.getPosition()+""+Pexeso_client.CurrentGame.turnCounter);
-                    if(Pexeso_client.CurrentGame.turnCounter == 1)sleep(2000);
-                    //while(comm.getToSend() != null);
+                    if(Pexeso_client.CurrentGame.turnCounter == 1)sleep(1500);
+                    
                     if(comm.isMsgsent() == true)
                     {
                         setIcon(card_id);
@@ -74,21 +119,32 @@ public class Pexeso_GUI extends javax.swing.JFrame {
                             {
                                 GameStatus.setText("Nice pair! Play again!");
                                 Pexeso_client.CurrentGame.turnCounter = 0;
+                                
                             }
                             else
                             {
                                 
                                 Pexeso_client.CurrentPlayer.setTurning(false);
-                                if(comm.getToSend() == null)
-                                {
-                                    GameStatus.setText("Opponents turn!");
-                                    Pexeso_client.CurrentGame.turnCounter = 0;
-                                    comm.setToSend("t"+(char)(Pexeso_client.CurrentGame.getID()+'0')+""+(char)(Pexeso_client.CurrentPlayer.getPosition()+'0'));
-                                }
-                                else
-                                {
-                                    
-                                }
+                                
+                                
+                                SwingUtilities.invokeLater(new Runnable() {
+                                    public void run() {
+
+                                      GameStatus.setText("Opponents turn!");
+
+                                    }
+                                  });
+                                
+                                
+                                Pexeso_client.mygui.turnCardBack(Pexeso_client.mygui.turns[0]);
+                                Pexeso_client.mygui.turnCardBack(Pexeso_client.mygui.turns[1]);
+                                sleep(2000);
+                                
+                                Pexeso_client.CurrentGame.turnCounter = 0;
+                                
+                                comm.setToSend("t"+(char)(Pexeso_client.CurrentGame.getID()+'0')+""+(char)(Pexeso_client.CurrentPlayer.getPosition()+'0'));
+                                comm.setMsgsent(false);
+                                
                                 
                             }
                         }
@@ -336,7 +392,6 @@ public class Pexeso_GUI extends javax.swing.JFrame {
         GameStatus = new javax.swing.JLabel();
         jSeparator2 = new javax.swing.JSeparator();
         statusLabel = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(102, 102, 102));
@@ -1500,8 +1555,6 @@ public class Pexeso_GUI extends javax.swing.JFrame {
 
         statusLabel.setText("Game status:");
 
-        jButton1.setText("jButton1");
-
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -1526,13 +1579,10 @@ public class Pexeso_GUI extends javax.swing.JFrame {
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(GameSave)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jButton1)
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(LeaveGame)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(GameExit)))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(LeaveGame)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(GameExit)))
+                .addContainerGap(22, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1557,9 +1607,7 @@ public class Pexeso_GUI extends javax.swing.JFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(p2Score)
                     .addComponent(p2Value))
-                .addGap(179, 179, 179)
-                .addComponent(jButton1)
-                .addGap(18, 18, 18)
+                .addGap(220, 220, 220)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(GameExit)
                     .addComponent(GameSave)
@@ -1803,7 +1851,7 @@ public class Pexeso_GUI extends javax.swing.JFrame {
 
             try 
             {
-                sleep(20000);
+                sleep(10000);
             } catch (InterruptedException ex) {
                 Logger.getLogger(Pexeso_GUI.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -1822,7 +1870,7 @@ public class Pexeso_GUI extends javax.swing.JFrame {
             {
                 p1Name.setText(Pexeso_client.CurrentGame.getNick1());
                 p2Name.setText(Pexeso_client.CurrentGame.getNick2());
-                
+                GameStatus.setText("Opponent found! Make your turn!");
                 
                 panel2.setVisible(false);
                 panel3.setVisible(true);
@@ -2270,7 +2318,6 @@ public class Pexeso_GUI extends javax.swing.JFrame {
     private javax.swing.JButton exit1;
     private javax.swing.JPanel gameboard;
     private javax.swing.JLabel info1;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel0;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
