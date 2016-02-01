@@ -61,7 +61,17 @@ public class Communication_model implements Runnable
                 while(isExit() == false)
                 { 
                     if(getToSend() != null)
-                    {                        
+                    {   
+                        System.out.println("Comm thread going to send: "+ toSend);
+                        if(toSend.charAt(0) == 't')
+                        {
+                            
+                            Pexeso_client.mygui.turnCardBack(Pexeso_client.mygui.turns[0]);
+                            Pexeso_client.mygui.turnCardBack(Pexeso_client.mygui.turns[1]);
+                            
+                        }
+                        
+                        
                         temp = msgSender(getToSend());
                         
                         if(temp == 0)
@@ -90,6 +100,17 @@ public class Communication_model implements Runnable
                                         {
                                             Pexeso_client.mygui.GameStatus.setText("Opponent scored!");
                                             Pexeso_client.CurrentGame.turnCounter = 0;
+                                            int opponentPos = Pexeso_client.CurrentPlayer.getPosition();
+                                            if(opponentPos == 1 )
+                                            {
+                                                opponentPos = 2;
+                                                Pexeso_client.mygui.increaseScore(opponentPos);
+                                            }
+                                            else
+                                            {
+                                                opponentPos = 1;
+                                                Pexeso_client.mygui.increaseScore(opponentPos);
+                                            }
                                         }
                                         else
                                         {

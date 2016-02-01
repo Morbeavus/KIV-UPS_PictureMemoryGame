@@ -70,7 +70,7 @@ public class Pexeso_GUI extends javax.swing.JFrame {
         
         if(player_position == 1 )
         {
-            Pexeso_client.CurrentGame.setp1Score(Pexeso_client.CurrentGame.getP1Score()+1);
+            Pexeso_client.CurrentGame.setp1Score(1 + Pexeso_client.CurrentGame.getP1Score());
             
             SwingUtilities.invokeLater(new Runnable() {
                 public void run() {
@@ -81,7 +81,7 @@ public class Pexeso_GUI extends javax.swing.JFrame {
         }
         else if(player_position == 2 )
         {
-            Pexeso_client.CurrentGame.setp2Score(Pexeso_client.CurrentGame.getP2Score()+1);
+            Pexeso_client.CurrentGame.setp2Score(1 + Pexeso_client.CurrentGame.getP2Score());
             
             SwingUtilities.invokeLater(new Runnable() {
                 public void run() {
@@ -119,6 +119,7 @@ public class Pexeso_GUI extends javax.swing.JFrame {
                             {
                                 GameStatus.setText("Nice pair! Play again!");
                                 Pexeso_client.CurrentGame.turnCounter = 0;
+                                increaseScore(Pexeso_client.CurrentPlayer.getPosition());
                                 
                             }
                             else
@@ -135,14 +136,12 @@ public class Pexeso_GUI extends javax.swing.JFrame {
                                     }
                                   });
                                 
-                                
-                                Pexeso_client.mygui.turnCardBack(Pexeso_client.mygui.turns[0]);
-                                Pexeso_client.mygui.turnCardBack(Pexeso_client.mygui.turns[1]);
                                 sleep(2000);
+                                
                                 
                                 Pexeso_client.CurrentGame.turnCounter = 0;
                                 
-                                comm.setToSend("t"+(char)(Pexeso_client.CurrentGame.getID()+'0')+""+(char)(Pexeso_client.CurrentPlayer.getPosition()+'0'));
+                                comm.setToSend("t"+(char)(Pexeso_client.CurrentGame.getID()+'0')+""+(Pexeso_client.CurrentPlayer.getPosition()));
                                 comm.setMsgsent(false);
                                 
                                 
@@ -1522,12 +1521,14 @@ public class Pexeso_GUI extends javax.swing.JFrame {
 
         p1Score.setText("P1 score:");
 
+        p1Value.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         p1Value.setText("0");
 
         p2Name.setText("Player 2 name");
 
         p2Score.setText("P2 score:");
 
+        p2Value.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         p2Value.setText("0");
 
         GameExit.setText("Exit");
@@ -1593,7 +1594,7 @@ public class Pexeso_GUI extends javax.swing.JFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(p1Score)
                     .addComponent(p1Value))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 204, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 202, Short.MAX_VALUE)
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(statusLabel)
