@@ -198,7 +198,7 @@ public class Game implements Runnable{
         if((gameCards[card[0]].getPic_id() == gameCards[card[1]].getPic_id()) && (card[0] != card[1])) 
         {
             gameCards[card[0]].cardLabel.setEnabled(false);
-            gameCards[card[0]].cardLabel.setEnabled(false);
+            gameCards[card[1]].cardLabel.setEnabled(false);
                     
             return 1; 
         }

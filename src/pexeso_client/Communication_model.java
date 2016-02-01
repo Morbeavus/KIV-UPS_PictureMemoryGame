@@ -12,6 +12,7 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.SwingUtilities;
 
 /**
  *
@@ -60,15 +61,7 @@ public class Communication_model implements Runnable
                 while(isExit() == false)
                 { 
                     if(getToSend() != null)
-                    {
-                        if(toSend.charAt(0) == 't')
-                        {
-                          // System.out.println("going to sleep mode 2000");
-                           sleep(2000);
-                           Pexeso_client.mygui.turnCardBack(Pexeso_client.mygui.turns[0]);
-                           Pexeso_client.mygui.turnCardBack(Pexeso_client.mygui.turns[1]);
-                        }
-                        
+                    {                        
                         temp = msgSender(getToSend());
                         
                         if(temp == 0)
@@ -100,10 +93,20 @@ public class Communication_model implements Runnable
                                         }
                                         else
                                         {
-                                            Pexeso_client.mygui.GameStatus.setText("Your turn!");
-                                            Pexeso_client.CurrentGame.turnCounter = 0;
+                                            SwingUtilities.invokeLater(new Runnable() {
+                                            @Override
+                                            public void run() {
+
+                                              Pexeso_client.mygui.GameStatus.setText("Your turn!");
+                                            }
+                                            });
+                                            
+                                            sleep(2000);
                                             Pexeso_client.mygui.turnCardBack(Pexeso_client.mygui.turns[0]);
-                                            Pexeso_client.mygui.turnCardBack(Pexeso_client.mygui.turns[1]);
+                                            Pexeso_client.mygui.turnCardBack(Pexeso_client.mygui.turns[1]);                                          
+                                            
+                                            
+                                            Pexeso_client.CurrentGame.turnCounter = 0;
                                             Pexeso_client.CurrentPlayer.setTurning(true);                  
                                         }
                                     }
