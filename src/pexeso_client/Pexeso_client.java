@@ -11,7 +11,9 @@ package pexeso_client;
  */
 public class Pexeso_client 
 {    
-    
+    public static Pexeso_GUI mygui = new Pexeso_GUI();
+    public static Game CurrentGame = null;
+    public static Player CurrentPlayer = null;
     /**
      * @param args the command line arguments
      */
@@ -22,13 +24,26 @@ public class Pexeso_client
         java.awt.EventQueue.invokeLater
         (   new Runnable() 
             {
+                @Override
                 public void run() 
                 {
-                    new Pexeso_GUI().setVisible(true);
+                    mygui.setVisible(true);
                 }
             }
         );
-
+        
+        /*while(true)
+        {
+            if(CurrentGame != null )
+            {
+            
+                if(CurrentGame.getState() == 1)
+                {
+                    mygui.panel3.validate();
+                    mygui.panel3.repaint();
+                }
+            }
+        }*/
     }
 }
     

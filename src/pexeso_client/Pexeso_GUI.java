@@ -9,9 +9,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import static java.lang.Thread.sleep;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 /**
@@ -24,9 +27,7 @@ public class Pexeso_GUI extends javax.swing.JFrame {
     private Communication_model comm;
     Thread t1;   
     public Game loaded_games[];
-    private Game CurrentGame;
-    public Player CurrentPlayer;
-    private int turns[] = new int[2];
+    public int turns[] = new int[2];
     private String [] gamesList;
     
     final static int GAME_SIZE = 64;
@@ -36,39 +37,70 @@ public class Pexeso_GUI extends javax.swing.JFrame {
     public Pexeso_GUI() {
         initComponents();
     }
-
+    
+    public void setIcon(int card_id)
+    {
+        int card = Pexeso_client.CurrentGame.getCard(card_id);
+        Pexeso_client.CurrentGame.gameCards[card_id].cardLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/pictures/"+card+".jpg")));
+    }
+    public void turnCardBack(int card_id)
+    {
+        Pexeso_client.CurrentGame.gameCards[card_id].cardLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/pictures/backend.jpg")));
+    }
+    
     private void GameCardClicked(int card_id)
     {
         int temp;
-        int card = CurrentGame.getCard(card_id);
         
-        if(CurrentGame.getState() == 1 && CurrentPlayer.isTurning() == true)
+        
+        if(Pexeso_client.CurrentGame.getState() == 1 && Pexeso_client.CurrentPlayer.isTurning() == true)
         {
-            if(CurrentGame.turnCounter != 2)
+            if(Pexeso_client.CurrentGame.turnCounter != 2)
             {
-                turns[CurrentGame.turnCounter] = card_id;
-                CurrentGame.turnCounter++;
-                temp = comm.msgSender("m"+(char)(card_id + '0')+""+(char)(CurrentGame.getID()+'0'));
-
-                if(temp == 0)
+                try 
                 {
-                    CurrentGame.gameCards[card_id].cardLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/pictures/"+card+".jpg")));
-
-                    if(CurrentGame.turnCounter == 2)
+                    turns[Pexeso_client.CurrentGame.turnCounter] = card_id;
+                    Pexeso_client.CurrentGame.turnCounter++;
+                    comm.setToSend("m"+(char)(card_id + '0')+""+(char)(Pexeso_client.CurrentGame.getID()+'0')+""+Pexeso_client.CurrentPlayer.getPosition()+""+Pexeso_client.CurrentGame.turnCounter);
+                    if(Pexeso_client.CurrentGame.turnCounter == 1)sleep(2000);
+                    //while(comm.getToSend() != null);
+                    if(comm.isMsgsent() == true)
                     {
-                        temp = CurrentGame.checkPairs(turns);
-
-                        if(temp == 1)
+                        setIcon(card_id);
+                        
+                        if(Pexeso_client.CurrentGame.turnCounter == 2)
                         {
-                            GameStatus.setText("Nice pair! Play again!");
-                            CurrentGame.turnCounter = 0;
+                            if(Pexeso_client.CurrentGame.checkPairs(turns) == 1) 
+                            {
+                                GameStatus.setText("Nice pair! Play again!");
+                                Pexeso_client.CurrentGame.turnCounter = 0;
+                            }
+                            else
+                            {
+                                
+                                Pexeso_client.CurrentPlayer.setTurning(false);
+                                if(comm.getToSend() == null)
+                                {
+                                    GameStatus.setText("Opponents turn!");
+                                    Pexeso_client.CurrentGame.turnCounter = 0;
+                                    comm.setToSend("t"+(char)(Pexeso_client.CurrentGame.getID()+'0')+""+(char)(Pexeso_client.CurrentPlayer.getPosition()+'0'));
+                                }
+                                else
+                                {
+                                    
+                                }
+                                
+                            }
                         }
                     }
-                }
-                else
-                {
-                    GameStatus.setText("Server is not responding!");
-                    CurrentGame.turnCounter--;
+                    else
+                    {
+                        GameStatus.setText("Server is not responding!");
+                        Pexeso_client.CurrentGame.turnCounter--;
+                    }
+                } 
+                catch (InterruptedException ex) {
+                    Logger.getLogger(Pexeso_GUI.class.getName()).log(Level.SEVERE, null, ex);
                 }
 
             }
@@ -107,7 +139,7 @@ public class Pexeso_GUI extends javax.swing.JFrame {
     private void FillCards() 
     {
         Card temp [];
-        temp = CurrentGame.getCards();
+        temp = Pexeso_client.CurrentGame.getCards();
         temp[0].setLabel(jLabel0);
         temp[1].setLabel(jLabel1);
         temp[2].setLabel(jLabel2);
@@ -174,10 +206,10 @@ public class Pexeso_GUI extends javax.swing.JFrame {
         temp[63].setLabel(jLabel63);
         for(int i = 0; i < temp.length ; i++)
         {
-            CurrentGame.gameCards[i].cardLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/pictures/backend.jpg")));
+            Pexeso_client.CurrentGame.gameCards[i].cardLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/pictures/backend.jpg")));
         }
         
-        CurrentGame.setCards(temp);
+        Pexeso_client.CurrentGame.setCards(temp);
     }
     
     /**
@@ -304,6 +336,7 @@ public class Pexeso_GUI extends javax.swing.JFrame {
         GameStatus = new javax.swing.JLabel();
         jSeparator2 = new javax.swing.JSeparator();
         statusLabel = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(102, 102, 102));
@@ -1467,6 +1500,8 @@ public class Pexeso_GUI extends javax.swing.JFrame {
 
         statusLabel.setText("Game status:");
 
+        jButton1.setText("jButton1");
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -1485,15 +1520,18 @@ public class Pexeso_GUI extends javax.swing.JFrame {
                         .addComponent(p2Score)
                         .addGap(18, 18, 18)
                         .addComponent(p2Value))
+                    .addComponent(p1Name)
+                    .addComponent(statusLabel)
+                    .addComponent(GameStatus)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(GameSave)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(LeaveGame)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(GameExit))
-                    .addComponent(p1Name)
-                    .addComponent(statusLabel)
-                    .addComponent(GameStatus))
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jButton1)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(LeaveGame)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(GameExit)))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
@@ -1519,7 +1557,9 @@ public class Pexeso_GUI extends javax.swing.JFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(p2Score)
                     .addComponent(p2Value))
-                .addGap(220, 220, 220)
+                .addGap(179, 179, 179)
+                .addComponent(jButton1)
+                .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(GameExit)
                     .addComponent(GameSave)
@@ -1611,15 +1651,15 @@ public class Pexeso_GUI extends javax.swing.JFrame {
         {
             if (users[i].getNick().equals(nick)) 
             {
-                this.CurrentPlayer = users[i];
+                Pexeso_client.CurrentPlayer = users[i];
             }
         }        
         
         System.out.println("Number of saved players:"+users.length);
         
-        if( this.CurrentPlayer == null) 
+        if( Pexeso_client.CurrentPlayer == null) 
         {
-            this.CurrentPlayer = new Player(nick);
+            Pexeso_client.CurrentPlayer = new Player(nick);
         }
         
         port = Integer.parseInt(port_in.getText());
@@ -1630,7 +1670,7 @@ public class Pexeso_GUI extends javax.swing.JFrame {
             comm = new Communication_model(port, ip, nick);
             
             
-            if(CurrentPlayer.getID() == -1)//new user
+            if(Pexeso_client.CurrentPlayer.getID() == -1)//new user
             {
                 LobbyStatus.setText("WELCOME NEW USER!");
                 
@@ -1639,10 +1679,10 @@ public class Pexeso_GUI extends javax.swing.JFrame {
                 { 
                     id = (comm.getLastMsg().charAt(1)-'0');
                     System.out.println("new player IDchar: "+comm.getLastMsg().charAt(1)+""+(comm.getLastMsg().charAt(1)-'0'));
-                    CurrentPlayer.setID(id);
-                    users = CurrentPlayer.newPlayer(users,CurrentPlayer);
+                    Pexeso_client.CurrentPlayer.setID(id);
+                    users = Pexeso_client.CurrentPlayer.newPlayer(users,Pexeso_client.CurrentPlayer);
                     
-                    File dir = new File("/saves/"+CurrentPlayer.getNick());
+                    File dir = new File("/saves/"+Pexeso_client.CurrentPlayer.getNick());
                     dir.mkdir();
                     loadGameBox.removeAllItems();
                     LoadGame.setVisible(false);
@@ -1652,12 +1692,20 @@ public class Pexeso_GUI extends javax.swing.JFrame {
             }
             else // old user
             {
-                LobbyStatus.setText("WELCOME BACK "+CurrentPlayer.getNick()+"!");
-                temp = comm.msgSender("C"+(char)(CurrentPlayer.getID()+'0'));
+                LobbyStatus.setText("WELCOME BACK "+Pexeso_client.CurrentPlayer.getNick()+"!");
+                temp = comm.msgSender("C"+(char)(Pexeso_client.CurrentPlayer.getID()+'0'));
+                
+                
+            }
+                    
+            
+            if(temp == 0)
+            {   
+                System.out.println("Succefull login as: "+nick+" on server IP: "+ip+" Port: "+port+ " PID: "+Pexeso_client.CurrentPlayer.getID());
                 
                 try
                 {
-                    loaded_games = Game.loadGames(CurrentPlayer.getNick());
+                    loaded_games = Game.loadGames(Pexeso_client.CurrentPlayer.getNick());
                     if(loaded_games != null)
                     {
                         loadGameBox.removeAllItems();
@@ -1672,12 +1720,6 @@ public class Pexeso_GUI extends javax.swing.JFrame {
                     LoadGame.setVisible(false);
                     System.out.println(e) ;
                 }
-            }
-                    
-            
-            if(temp == 0)
-            {   
-                System.out.println("Succefull login as: "+nick+" on server IP: "+ip+" Port: "+port+ " PID: "+CurrentPlayer.getID());
                 
                 lobbyNick.setText(nick);
                 lobbyNick.setVisible(true);
@@ -1722,7 +1764,7 @@ public class Pexeso_GUI extends javax.swing.JFrame {
         
         status_label.setText("Disconnected...");
         status_label.setVisible(true);
-        CurrentPlayer = null;
+        Pexeso_client.CurrentPlayer = null;
         loaded_games = null;
         loadGameBox.removeAllItems();
         LoadGame.setVisible(false);
@@ -1742,22 +1784,49 @@ public class Pexeso_GUI extends javax.swing.JFrame {
         
         int temp;
         String msg;
-        CurrentGame = new Game(comm.getNick());
+        Pexeso_client.CurrentGame = new Game(comm.getNick());
         
-        msg = CurrentGame.ConstructNGMsg(CurrentPlayer.getID());
+        msg = Pexeso_client.CurrentGame.ConstructNGMsg(Pexeso_client.CurrentPlayer.getID());
         temp = comm.msgSender(msg);
         if(temp == 0)
         {   
-            CurrentGame.setID(Character.getNumericValue(comm.getLastMsg().charAt(1)));
+            Pexeso_client.CurrentGame.setID(comm.getLastMsg().charAt(1)-'0');
             FillCards();
-            CurrentPlayer.setTurning(true);
-            panel2.setVisible(false);
-            panel3.setVisible(true);
+            Pexeso_client.CurrentPlayer.setTurning(true);
+            Pexeso_client.CurrentPlayer.setPosition(1);
+            
             
             comm.setExit(false);
             t1 = new Thread(comm); 
             t1.start();
             
+
+            try 
+            {
+                sleep(20000);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Pexeso_GUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+            if(Pexeso_client.CurrentGame.getState() != 1)
+            {
+                comm.setExit(true);
+                comm.game_thread.interrupt();
+                panel2.setVisible(true);
+                panel3.setVisible(false);
+                Pexeso_client.CurrentGame = null;
+                LobbyStatus.setText("Game ended no opponent found!");
+                LobbyStatus.setVisible(true);
+            }
+            else if(Pexeso_client.CurrentGame.getState() == 1)
+            {
+                p1Name.setText(Pexeso_client.CurrentGame.getNick1());
+                p2Name.setText(Pexeso_client.CurrentGame.getNick2());
+                
+                
+                panel2.setVisible(false);
+                panel3.setVisible(true);
+            }
         }
         else
         {
@@ -1769,6 +1838,8 @@ public class Pexeso_GUI extends javax.swing.JFrame {
     private void GameExitMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_GameExitMouseClicked
         comm.closeSocket();
         comm.setExit(true);
+        comm.game_thread.interrupt();
+        
         System.exit(0);
     }//GEN-LAST:event_GameExitMouseClicked
 
@@ -2025,8 +2096,9 @@ public class Pexeso_GUI extends javax.swing.JFrame {
     }//GEN-LAST:event_jLabel63MouseClicked
 
     private void LeaveGameMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_LeaveGameMouseClicked
-        CurrentGame = null;
+        Pexeso_client.CurrentGame = null;
         comm.setExit(true);
+        comm.game_thread.interrupt();
         
         LobbyStatus.setText("You left your current game");
         LobbyStatus.setVisible(true);        
@@ -2084,14 +2156,17 @@ public class Pexeso_GUI extends javax.swing.JFrame {
         
         
         int p1score = 0, p2score = 0;
-        String player1, player2 = CurrentPlayer.getNick();
-        CurrentPlayer.setTurning(false);
+        String player1, player2 = Pexeso_client.CurrentPlayer.getNick();
+        Pexeso_client.CurrentPlayer.setTurning(false);
+        Pexeso_client.CurrentPlayer.setPosition(2);
         String selected = joinGameBox.getSelectedItem().toString();
         System.out.println("Selected for connection: "+selected);
         player1 = selected.substring(2);
         
         String msg = "j";
         msg += selected.charAt(1);
+        msg += (char)(Pexeso_client.CurrentPlayer.getID()+'0');
+        
         temp = comm.msgSender(msg);
         msg = comm.getLastMsg();
         
@@ -2112,16 +2187,15 @@ public class Pexeso_GUI extends javax.swing.JFrame {
                 cards[i].setState(msg.charAt(1 + i)-'0');
             }
 
-            CurrentGame = new Game(selected.charAt(1), player1, player2, p1score, p2score, cards, 1);
-            CurrentGame.setID(selected.charAt(1));
-
+            Pexeso_client.CurrentGame = new Game(selected.charAt(1), player1, player2, p1score, p2score, cards, 1);
+            Pexeso_client.CurrentGame.setID(selected.charAt(1)-'0');
             FillCards();
             
-            p1Name.setText(CurrentGame.getNick1());
-            p2Name.setText(CurrentGame.getNick2());
-            p1Value.setText(CurrentGame.getP1Score()+"");
-            p2Value.setText(CurrentGame.getP2Score()+"");
-            
+            p1Name.setText(Pexeso_client.CurrentGame.getNick1());
+            p2Name.setText(Pexeso_client.CurrentGame.getNick2());
+            p1Value.setText(Pexeso_client.CurrentGame.getP1Score()+"");
+            p2Value.setText(Pexeso_client.CurrentGame.getP2Score()+"");
+            Pexeso_client.CurrentGame.setState(1);
             panel2.setVisible(false);
             panel3.setVisible(true);
             
@@ -2141,7 +2215,7 @@ public class Pexeso_GUI extends javax.swing.JFrame {
         
         try 
         {
-            CurrentGame.saveGame(CurrentGame, CurrentPlayer.getNick());
+            Pexeso_client.CurrentGame.saveGame(Pexeso_client.CurrentGame, Pexeso_client.CurrentPlayer.getNick());
         } 
         catch (IOException ex) 
         {
@@ -2181,11 +2255,11 @@ public class Pexeso_GUI extends javax.swing.JFrame {
 //    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton GameExit;
-    private javax.swing.JButton GameSave;
-    private javax.swing.JLabel GameStatus;
+    public javax.swing.JButton GameExit;
+    public javax.swing.JButton GameSave;
+    public javax.swing.JLabel GameStatus;
     private javax.swing.JButton JoinGame;
-    private javax.swing.JButton LeaveGame;
+    public javax.swing.JButton LeaveGame;
     private javax.swing.JButton LoadGame;
     private javax.swing.JLabel LobbyStatus;
     private javax.swing.JPanel Login;
@@ -2196,6 +2270,7 @@ public class Pexeso_GUI extends javax.swing.JFrame {
     private javax.swing.JButton exit1;
     private javax.swing.JPanel gameboard;
     private javax.swing.JLabel info1;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel0;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
@@ -2261,8 +2336,8 @@ public class Pexeso_GUI extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JSeparator jSeparator2;
+    public javax.swing.JSeparator jSeparator1;
+    public javax.swing.JSeparator jSeparator2;
     private javax.swing.JComboBox<String> joinGameBox;
     private javax.swing.JComboBox<String> loadGameBox;
     private javax.swing.JPanel lobbyMPanel;
@@ -2270,22 +2345,22 @@ public class Pexeso_GUI extends javax.swing.JFrame {
     private javax.swing.JButton login;
     private javax.swing.JLabel nick;
     private javax.swing.JLabel nickHint;
-    private javax.swing.JLabel p1Name;
-    private javax.swing.JLabel p1Score;
-    private javax.swing.JLabel p1Value;
-    private javax.swing.JLabel p2Name;
-    private javax.swing.JLabel p2Score;
-    private javax.swing.JLabel p2Value;
-    private javax.swing.JPanel panel1;
-    private javax.swing.JPanel panel2;
-    private javax.swing.JPanel panel3;
+    public javax.swing.JLabel p1Name;
+    public javax.swing.JLabel p1Score;
+    public javax.swing.JLabel p1Value;
+    public javax.swing.JLabel p2Name;
+    public javax.swing.JLabel p2Score;
+    public javax.swing.JLabel p2Value;
+    public javax.swing.JPanel panel1;
+    public javax.swing.JPanel panel2;
+    public javax.swing.JPanel panel3;
     private javax.swing.JTextField player_name;
     private javax.swing.JLabel portHint;
     private javax.swing.JTextField port_in;
     private javax.swing.JLabel port_label;
     private javax.swing.JLabel server;
     private javax.swing.JTextField server_ip;
-    private javax.swing.JLabel statusLabel;
+    public javax.swing.JLabel statusLabel;
     private javax.swing.JLabel status_label;
     private javax.swing.JLabel welcome;
     private javax.swing.JPanel welcomePanel;

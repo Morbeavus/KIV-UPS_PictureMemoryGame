@@ -10,7 +10,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
@@ -19,7 +18,7 @@ import java.util.Scanner;
  *
  * @author Morbeavus
  */
-public class Game implements Serializable{
+public class Game implements Runnable{
     private int p1Score;
     private int p2Score;
     public Card[] gameCards;
@@ -65,6 +64,16 @@ public class Game implements Serializable{
         this.p2Score = p2score;
         this.gameCards = GameCards;        
     }
+    
+    @Override
+    public void run() 
+    {
+        while(state != 3)
+        {
+            
+        }
+    }
+    
     public static Game[] loadGames(String player) throws FileNotFoundException
     {
         Game games[];
@@ -186,7 +195,7 @@ public class Game implements Serializable{
     
     public int checkPairs(int card[] )
     {
-        if(gameCards[card[0]].getPic_id() == gameCards[card[1]].getPic_id())
+        if((gameCards[card[0]].getPic_id() == gameCards[card[1]].getPic_id()) && (card[0] != card[1])) 
         {
             gameCards[card[0]].cardLabel.setEnabled(false);
             gameCards[card[0]].cardLabel.setEnabled(false);

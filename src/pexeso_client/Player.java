@@ -21,9 +21,10 @@ public class Player implements Serializable{
     private String nick;
     private int lastMsgID;
     private boolean turning;
+    private int position;
     public Player(String ID, String nick) 
     {
-        this.turning = false;
+       this.turning = false;
        this.ID = Integer.parseInt(ID);
        this.nick = nick;
     }
@@ -151,6 +152,20 @@ public class Player implements Serializable{
      */
     public void setTurning(boolean turning) {
         this.turning = turning;
+    }
+
+    /**
+     * @return the position
+     */
+    public int getPosition() {
+        return position;
+    }
+
+    /**
+     * @param position the position to set
+     */
+    public void setPosition(int position) {
+        this.position = position;
     }
     
 }

@@ -10,7 +10,6 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
-import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -28,7 +27,9 @@ public class Communication_model implements Runnable
     private String toSend = null;
     private boolean msgsent = false;
     private boolean exit = false;
+    private boolean opponent_connected = false;
     private DatagramSocket socket = null ;
+    Thread game_thread;
     
     private final static int PACKETSIZE = 75;
     
@@ -41,7 +42,9 @@ public class Communication_model implements Runnable
         try 
         {
             socket = new DatagramSocket() ;
-        } catch (SocketException ex) {
+        } 
+        catch (SocketException ex) 
+        {
             Logger.getLogger(Communication_model.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -49,6 +52,8 @@ public class Communication_model implements Runnable
     @Override
     public void run() 
     {   
+            game_thread = new Thread(Pexeso_client.CurrentGame);
+            game_thread.start();
             int temp;
             try 
             {
@@ -56,16 +61,80 @@ public class Communication_model implements Runnable
                 { 
                     if(getToSend() != null)
                     {
+                        if(toSend.charAt(0) == 't')
+                        {
+                          // System.out.println("going to sleep mode 2000");
+                           sleep(2000);
+                           Pexeso_client.mygui.turnCardBack(Pexeso_client.mygui.turns[0]);
+                           Pexeso_client.mygui.turnCardBack(Pexeso_client.mygui.turns[1]);
+                        }
+                        
                         temp = msgSender(getToSend());
+                        
                         if(temp == 0)
                         {
                             setToSend(null);
                             setMsgsent(true);
                         }
+                    }
+                    else if(Pexeso_client.CurrentPlayer.isTurning() == false) /*asks for opponent's turns*/
+                    {
+                        temp = msgSender("M"+(char)(Pexeso_client.CurrentGame.getID()+'0')+""+(char)(Pexeso_client.CurrentPlayer.getPosition()+'0'));
+                        
+                        if(temp == 0)
+                        {
+                            if(lastMsg.charAt(2) == '1')
+                            {
+                                if((1 + Pexeso_client.CurrentGame.turnCounter) == (int)(lastMsg.charAt(3)-'0'))
+                                {
+                                    Pexeso_client.mygui.setIcon(lastMsg.charAt(1)-'0');
+                                    Pexeso_client.mygui.turns[Pexeso_client.CurrentGame.turnCounter] = lastMsg.charAt(1)-'0';
+                                    Pexeso_client.CurrentGame.turnCounter++;
 
+                                    if(Pexeso_client.CurrentGame.turnCounter == 2)
+                                    {
+                                        if(Pexeso_client.CurrentGame.checkPairs(Pexeso_client.mygui.turns) == 1)
+                                        {
+                                            Pexeso_client.mygui.GameStatus.setText("Opponent scored!");
+                                            Pexeso_client.CurrentGame.turnCounter = 0;
+                                        }
+                                        else
+                                        {
+                                            Pexeso_client.mygui.GameStatus.setText("Your turn!");
+                                            Pexeso_client.CurrentGame.turnCounter = 0;
+                                            Pexeso_client.mygui.turnCardBack(Pexeso_client.mygui.turns[0]);
+                                            Pexeso_client.mygui.turnCardBack(Pexeso_client.mygui.turns[1]);
+                                            Pexeso_client.CurrentPlayer.setTurning(true);                  
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else if(Pexeso_client.CurrentGame.getNick2() == null) /*tries to find opponent */
+                    {
+                        temp = msgSender("s"+(char)(Pexeso_client.CurrentGame.getID()+'0'));
+                        
+                        if(temp == 0)
+                        {
+                            if( 47 < lastMsg.charAt(1) &&  lastMsg.charAt(1) < 58  ) /*basically asks if its number*/
+                            {
+                                Pexeso_client.CurrentGame.setNick2(lastMsg.substring(2,2+lastMsg.charAt(1)-'0'));
+                                Pexeso_client.CurrentGame.setState(1);
+                            }
+                            
+                        }
+                    }
+                    else /*connection refreshing*/
+                    { 
+                        temp = msgSender("Hello");
+                        
+                        if(temp != 0)
+                        {
+                            sleep(10000);
+                        }
                     }
                     sleep(2000);
-
                 }
             } 
             catch (InterruptedException ex) 
@@ -298,5 +367,19 @@ public class Communication_model implements Runnable
      */
     public synchronized void setExit(boolean exit) {
         this.exit = exit;
+    }
+
+    /**
+     * @return the opponent_connected
+     */
+    public boolean isOpponent_connected() {
+        return opponent_connected;
+    }
+
+    /**
+     * @param opponent_connected the opponent_connected to set
+     */
+    public synchronized void setOpponent_connected(boolean opponent_connected) {
+        this.opponent_connected = opponent_connected;
     }
 }
