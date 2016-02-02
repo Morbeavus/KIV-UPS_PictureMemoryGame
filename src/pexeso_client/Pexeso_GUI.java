@@ -2307,16 +2307,16 @@ public class Pexeso_GUI extends javax.swing.JFrame {
     public javax.swing.JButton GameExit;
     public javax.swing.JButton GameSave;
     public javax.swing.JLabel GameStatus;
-    private javax.swing.JButton JoinGame;
+    public javax.swing.JButton JoinGame;
     public javax.swing.JButton LeaveGame;
-    private javax.swing.JButton LoadGame;
-    private javax.swing.JLabel LobbyStatus;
+    public javax.swing.JButton LoadGame;
+    public javax.swing.JLabel LobbyStatus;
     private javax.swing.JPanel Login;
-    private javax.swing.JButton NewGame;
-    private javax.swing.JButton Refreshlist;
-    private javax.swing.JButton backToLogin;
+    public javax.swing.JButton NewGame;
+    public javax.swing.JButton Refreshlist;
+    public javax.swing.JButton backToLogin;
     private javax.swing.JButton exit;
-    private javax.swing.JButton exit1;
+    public javax.swing.JButton exit1;
     private javax.swing.JPanel gameboard;
     private javax.swing.JLabel info1;
     private javax.swing.JLabel jLabel0;
@@ -2386,10 +2386,10 @@ public class Pexeso_GUI extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     public javax.swing.JSeparator jSeparator1;
     public javax.swing.JSeparator jSeparator2;
-    private javax.swing.JComboBox<String> joinGameBox;
-    private javax.swing.JComboBox<String> loadGameBox;
+    public javax.swing.JComboBox<String> joinGameBox;
+    public javax.swing.JComboBox<String> loadGameBox;
     private javax.swing.JPanel lobbyMPanel;
-    private javax.swing.JLabel lobbyNick;
+    public javax.swing.JLabel lobbyNick;
     private javax.swing.JButton login;
     private javax.swing.JLabel nick;
     private javax.swing.JLabel nickHint;
@@ -2412,7 +2412,7 @@ public class Pexeso_GUI extends javax.swing.JFrame {
     private javax.swing.JLabel status_label;
     private javax.swing.JLabel welcome;
     private javax.swing.JPanel welcomePanel;
-    private javax.swing.JLabel youarelogged;
+    public javax.swing.JLabel youarelogged;
     // End of variables declaration//GEN-END:variables
 
     

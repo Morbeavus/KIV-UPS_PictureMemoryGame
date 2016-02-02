@@ -50,6 +50,20 @@ public class Communication_model implements Runnable
         }
     }
     
+    public void terminateGame()
+    {
+
+        Pexeso_client.CurrentGame = null;
+        setExit(true);
+        game_thread.interrupt();
+
+        Pexeso_client.mygui.LobbyStatus.setText("Your game ended: server was not responding!");
+        Pexeso_client.mygui.LobbyStatus.setVisible(true);        
+        Pexeso_client.mygui.panel2.setVisible(true);
+        Pexeso_client.mygui.panel3.setVisible(false);
+             
+    }
+    
     @Override
     public void run() 
     {   
@@ -78,6 +92,15 @@ public class Communication_model implements Runnable
                         {
                             setToSend(null);
                             setMsgsent(true);
+                        }
+                        else
+                        {
+                            sleep(10000);
+                            temp = msgSender("Hello");
+                            if(temp != 0)
+                            {
+                                terminateGame();
+                            }
                         }
                     }
                     else if(Pexeso_client.CurrentPlayer.isTurning() == false) /*asks for opponent's turns*/
@@ -134,6 +157,15 @@ public class Communication_model implements Runnable
                                 }
                             }
                         }
+                        else
+                        {
+                            sleep(10000);
+                            temp = msgSender("Hello");
+                            if(temp != 0)
+                            {
+                                terminateGame();
+                            }
+                        }
                     }
                     else if(Pexeso_client.CurrentGame.getNick2() == null) /*tries to find opponent */
                     {
@@ -156,6 +188,11 @@ public class Communication_model implements Runnable
                         if(temp != 0)
                         {
                             sleep(10000);
+                            temp = msgSender("Hello");
+                            if(temp != 0)
+                            {
+                                terminateGame();
+                            }
                         }
                     }
                     sleep(2000);
