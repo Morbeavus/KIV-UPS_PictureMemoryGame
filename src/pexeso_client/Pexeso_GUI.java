@@ -48,22 +48,16 @@ public class Pexeso_GUI extends javax.swing.JFrame {
 
           Pexeso_client.CurrentGame.gameCards[card_id].cardLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/pictures/"+card+".jpg")));
         }
-      });
-        
-        
-        
+      }); 
     }
     public void turnCardBack(int card_id)
-    {
-        
+    { 
         SwingUtilities.invokeLater(new Runnable() {
         public void run() {
 
           Pexeso_client.CurrentGame.gameCards[card_id].cardLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/pictures/backend.jpg")));
         }
-      });
-        
-        
+      });  
     }
     public void increaseScore(int player_position)
     {
@@ -94,10 +88,7 @@ public class Pexeso_GUI extends javax.swing.JFrame {
     }
     
     private void GameCardClicked(int card_id)
-    {
-        int temp;
-        
-        
+    {        
         if(Pexeso_client.CurrentGame.getState() == 1 && Pexeso_client.CurrentPlayer.isTurning() == true)
         {
             if(Pexeso_client.CurrentGame.turnCounter != 2)
@@ -136,15 +127,12 @@ public class Pexeso_GUI extends javax.swing.JFrame {
                                     }
                                   });
                                 
-                                sleep(2000);
-                                
-                                
+                                sleep(4000);
                                 Pexeso_client.CurrentGame.turnCounter = 0;
                                 
                                 comm.setToSend("t"+(char)(Pexeso_client.CurrentGame.getID()+'0')+""+(Pexeso_client.CurrentPlayer.getPosition()));
                                 comm.setMsgsent(false);
-                                
-                                
+                                    
                             }
                         }
                     }
@@ -157,7 +145,6 @@ public class Pexeso_GUI extends javax.swing.JFrame {
                 catch (InterruptedException ex) {
                     Logger.getLogger(Pexeso_GUI.class.getName()).log(Level.SEVERE, null, ex);
                 }
-
             }
         }
     }
@@ -1680,16 +1667,25 @@ public class Pexeso_GUI extends javax.swing.JFrame {
     private void port_inActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_port_inActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_port_inActionPerformed
-
+    
+    /**
+     * checks if inputed string is numerical
+     * @param str
+     * @return 
+     */
+    public static boolean isNumeric(String str)
+    {
+      return str.matches("-?\\d+(\\.\\d+)?");  //match a number with optional '-' and decimal.
+    }
+    
     private void loginMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_loginMouseClicked
         
         status_label.setVisible(true);
         status_label.setText("Connecting...");
         
-        
         String nick;
         InetAddress ip; 
-        int port;
+        int port = 35625;
         char nick_l;
         int temp;
         int id;
@@ -1711,13 +1707,16 @@ public class Pexeso_GUI extends javax.swing.JFrame {
             Pexeso_client.CurrentPlayer = new Player(nick);
         }
         
-        port = Integer.parseInt(port_in.getText());
+        if(port_in.getText().equals("") == false && isNumeric(port_in.getText()) == true)
+        {
+            port = Integer.parseInt(port_in.getText());
+        }
+        
         try
         {
             ip = InetAddress.getByName(server_ip.getText());
             
             comm = new Communication_model(port, ip, nick);
-            
             
             if(Pexeso_client.CurrentPlayer.getID() == -1)//new user
             {
@@ -1736,18 +1735,13 @@ public class Pexeso_GUI extends javax.swing.JFrame {
                     loadGameBox.removeAllItems();
                     LoadGame.setVisible(false);
                 }
-                    
-                
             }
             else // old user
             {
                 LobbyStatus.setText("WELCOME BACK "+Pexeso_client.CurrentPlayer.getNick()+"!");
-                temp = comm.msgSender("C"+(char)(Pexeso_client.CurrentPlayer.getID()+'0'));
-                
-                
+                temp = comm.msgSender("C"+(char)(Pexeso_client.CurrentPlayer.getID()+'0'));     
             }
                     
-            
             if(temp == 0)
             {   
                 System.out.println("Succefull login as: "+nick+" on server IP: "+ip+" Port: "+port+ " PID: "+Pexeso_client.CurrentPlayer.getID());
@@ -1787,9 +1781,6 @@ public class Pexeso_GUI extends javax.swing.JFrame {
         {
            System.out.println( e ) ;
         }
-          
-        
-        
     }//GEN-LAST:event_loginMouseClicked
 
     private void exitMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exitMouseClicked
@@ -1810,7 +1801,6 @@ public class Pexeso_GUI extends javax.swing.JFrame {
     }//GEN-LAST:event_exit1ActionPerformed
 
     private void backToLoginMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_backToLoginMouseClicked
-        
         status_label.setText("Disconnected...");
         status_label.setVisible(true);
         Pexeso_client.CurrentPlayer = null;
@@ -1822,7 +1812,6 @@ public class Pexeso_GUI extends javax.swing.JFrame {
         
         panel1.setVisible(true);
         panel2.setVisible(false);
-        
     }//GEN-LAST:event_backToLoginMouseClicked
 
     private void jLabel0MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel0MouseClicked
@@ -1832,6 +1821,7 @@ public class Pexeso_GUI extends javax.swing.JFrame {
     private void NewGameMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_NewGameMouseClicked
         
         int temp;
+        int i = 0;
         String msg;
         Pexeso_client.CurrentGame = new Game(comm.getNick());
         
@@ -1844,14 +1834,11 @@ public class Pexeso_GUI extends javax.swing.JFrame {
             Pexeso_client.CurrentPlayer.setTurning(true);
             Pexeso_client.CurrentPlayer.setPosition(1);
             
-            
             comm.setExit(false);
             t1 = new Thread(comm); 
             t1.start();
             
-
-            try 
-            {
+            try {
                 sleep(10000);
             } catch (InterruptedException ex) {
                 Logger.getLogger(Pexeso_GUI.class.getName()).log(Level.SEVERE, null, ex);
@@ -2201,8 +2188,6 @@ public class Pexeso_GUI extends javax.swing.JFrame {
        
         int i, temp;
         Card [] cards = new Card[GAME_SIZE];
-        
-        
         
         int p1score = 0, p2score = 0;
         String player1, player2 = Pexeso_client.CurrentPlayer.getNick();

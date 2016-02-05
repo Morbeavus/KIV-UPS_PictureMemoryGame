@@ -79,7 +79,7 @@ public class Communication_model implements Runnable
                         System.out.println("Comm thread going to send: "+ toSend);
                         if(toSend.charAt(0) == 't')
                         {
-                            
+                            sleep(2000);
                             Pexeso_client.mygui.turnCardBack(Pexeso_client.mygui.turns[0]);
                             Pexeso_client.mygui.turnCardBack(Pexeso_client.mygui.turns[1]);
                             
@@ -145,7 +145,7 @@ public class Communication_model implements Runnable
                                             }
                                             });
                                             
-                                            sleep(2000);
+                                            sleep(4000);
                                             Pexeso_client.mygui.turnCardBack(Pexeso_client.mygui.turns[0]);
                                             Pexeso_client.mygui.turnCardBack(Pexeso_client.mygui.turns[1]);                                          
                                             
