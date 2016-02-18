@@ -31,19 +31,6 @@ public class Pexeso_client
                 }
             }
         );
-        
-        /*while(true)
-        {
-            if(CurrentGame != null )
-            {
-            
-                if(CurrentGame.getState() == 1)
-                {
-                    mygui.panel3.validate();
-                    mygui.panel3.repaint();
-                }
-            }
-        }*/
     }
 }
     

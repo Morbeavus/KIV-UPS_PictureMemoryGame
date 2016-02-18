@@ -85,8 +85,53 @@ public class Pexeso_GUI extends javax.swing.JFrame {
               });
         }
         
+                
     }
     
+    public int checkVictory(int player_position) 
+    {
+        int victory_state = 0;
+        if(Pexeso_client.CurrentGame.getP1Score()+Pexeso_client.CurrentGame.getP2Score() == 32)
+        {
+            if(player_position == 1)
+            {
+                if(Pexeso_client.CurrentGame.getP1Score() > Pexeso_client.CurrentGame.getP2Score())
+                {
+                    
+                    victory_state = 1;
+                }
+                else if(Pexeso_client.CurrentGame.getP1Score() < Pexeso_client.CurrentGame.getP2Score())
+                {
+                    
+                    victory_state = 2;
+                }
+                else victory_state = 3;
+            }
+            else
+            {
+                if(Pexeso_client.CurrentGame.getP1Score() > Pexeso_client.CurrentGame.getP2Score())
+                {
+                    victory_state = 2;
+                }
+                else if(Pexeso_client.CurrentGame.getP1Score() < Pexeso_client.CurrentGame.getP2Score())
+                {
+                    victory_state = 1;
+                }
+                else victory_state = 3;
+            }
+            
+        }
+        
+        if(victory_state != 0 )
+        {
+            while(comm.isMsgsent() == false ){}
+            comm.msgSender("E"+(char)(Pexeso_client.CurrentGame.getID()+'0'));
+            Pexeso_client.CurrentGame.setState(3);
+        }
+        
+        return victory_state;
+    }
+        
     private void GameCardClicked(int card_id)
     {        
         if(Pexeso_client.CurrentGame.getState() == 1 && Pexeso_client.CurrentPlayer.isTurning() == true)
@@ -98,7 +143,7 @@ public class Pexeso_GUI extends javax.swing.JFrame {
                     turns[Pexeso_client.CurrentGame.turnCounter] = card_id;
                     Pexeso_client.CurrentGame.turnCounter++;
                     comm.setToSend("m"+(char)(card_id + '0')+""+(char)(Pexeso_client.CurrentGame.getID()+'0')+""+Pexeso_client.CurrentPlayer.getPosition()+""+Pexeso_client.CurrentGame.turnCounter);
-                    if(Pexeso_client.CurrentGame.turnCounter == 1)sleep(1500);
+                    if(Pexeso_client.CurrentGame.turnCounter == 1)sleep(1000);
                     
                     if(comm.isMsgsent() == true)
                     {
@@ -112,6 +157,12 @@ public class Pexeso_GUI extends javax.swing.JFrame {
                                 Pexeso_client.CurrentGame.turnCounter = 0;
                                 increaseScore(Pexeso_client.CurrentPlayer.getPosition());
                                 
+                                switch(checkVictory(Pexeso_client.CurrentPlayer.getPosition()))
+                                {
+                                    case 1: GameStatus.setText("YOU WON!");Pexeso_client.CurrentGame.turnCounter = 2;Pexeso_client.CurrentPlayer.setTurning(false);break;
+                                    case 2: GameStatus.setText("YOU LOST!");Pexeso_client.CurrentGame.turnCounter = 2;Pexeso_client.CurrentPlayer.setTurning(false);break;
+                                    case 3: GameStatus.setText("Stalemate!");Pexeso_client.CurrentGame.turnCounter = 2;Pexeso_client.CurrentPlayer.setTurning(false);break;
+                                }
                             }
                             else
                             {
@@ -178,6 +229,8 @@ public class Pexeso_GUI extends javax.swing.JFrame {
     /**
      * HOPE NOONE EVER SEES THIS AWFULL METHOD
      */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Card filling">
     private void FillCards() 
     {
         Card temp [];
@@ -249,10 +302,11 @@ public class Pexeso_GUI extends javax.swing.JFrame {
         for(int i = 0; i < temp.length ; i++)
         {
             Pexeso_client.CurrentGame.gameCards[i].cardLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/pictures/backend.jpg")));
+            Pexeso_client.CurrentGame.gameCards[i].cardLabel.setEnabled(true);
         }
         
         Pexeso_client.CurrentGame.setCards(temp);
-    }
+    }// </editor-fold>
     
     /**
      * This method is called from within the constructor to initialize the form.
@@ -2399,6 +2453,8 @@ public class Pexeso_GUI extends javax.swing.JFrame {
     private javax.swing.JPanel welcomePanel;
     public javax.swing.JLabel youarelogged;
     // End of variables declaration//GEN-END:variables
+
+
 
     
 }
