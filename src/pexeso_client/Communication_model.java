@@ -330,7 +330,7 @@ public class Communication_model implements Runnable
      * @param msg
      * @return 1 for failed connection
      */
-    public synchronized int msgSender(String msg)
+    public int msgSender(String msg)
     {
         for(int i = 0; i < 3; i++)
         {

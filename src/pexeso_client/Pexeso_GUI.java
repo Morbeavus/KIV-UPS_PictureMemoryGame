@@ -124,7 +124,6 @@ public class Pexeso_GUI extends javax.swing.JFrame {
         
         if(victory_state != 0 )
         {
-            while(comm.isMsgsent() == false ){}
             comm.msgSender("E"+(char)(Pexeso_client.CurrentGame.getID()+'0'));
             Pexeso_client.CurrentGame.setState(3);
         }
@@ -1926,6 +1925,7 @@ public class Pexeso_GUI extends javax.swing.JFrame {
     }//GEN-LAST:event_NewGameMouseClicked
 
     private void GameExitMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_GameExitMouseClicked
+        comm.msgSender("E"+(char)(Pexeso_client.CurrentGame.getID()+'0'));
         comm.closeSocket();
         comm.setExit(true);
         comm.game_thread.interrupt();
@@ -2186,6 +2186,8 @@ public class Pexeso_GUI extends javax.swing.JFrame {
     }//GEN-LAST:event_jLabel63MouseClicked
 
     private void LeaveGameMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_LeaveGameMouseClicked
+        
+        comm.msgSender("E"+(char)(Pexeso_client.CurrentGame.getID()+'0'));
         Pexeso_client.CurrentGame = null;
         comm.setExit(true);
         comm.game_thread.interrupt();
