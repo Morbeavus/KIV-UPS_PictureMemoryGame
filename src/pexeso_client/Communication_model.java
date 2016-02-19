@@ -30,7 +30,6 @@ public class Communication_model implements Runnable
     private boolean exit = false;
     private boolean opponent_connected = false;
     private DatagramSocket socket = null ;
-    Thread game_thread;
     
     private final static int PACKETSIZE = 75;
     
@@ -55,7 +54,6 @@ public class Communication_model implements Runnable
 
         Pexeso_client.CurrentGame = null;
         setExit(true);
-        game_thread.interrupt();
 
         Pexeso_client.mygui.LobbyStatus.setText("Your game ended: server was not responding!");
         Pexeso_client.mygui.LobbyStatus.setVisible(true);        
@@ -67,9 +65,8 @@ public class Communication_model implements Runnable
     @Override
     public void run() 
     {   
-            game_thread = new Thread(Pexeso_client.CurrentGame);
-            game_thread.start();
             int temp;
+            int tries = 0;
             try 
             {
                 while(isExit() == false)
@@ -101,6 +98,7 @@ public class Communication_model implements Runnable
                             {
                                 terminateGame();
                             }
+                            
                         }
                     }
                     else if(Pexeso_client.CurrentPlayer.isTurning() == false) /*asks for opponent's turns*/
@@ -173,10 +171,9 @@ public class Communication_model implements Runnable
                         {
                             sleep(10000);
                             temp = msgSender("Hello");
-                            if(temp != 0)
-                            {
-                                terminateGame();
-                            }
+                            
+                            terminateGame();
+                            
                         }
                     }
                     else if(Pexeso_client.CurrentGame.getNick2() == null) /*tries to find opponent */

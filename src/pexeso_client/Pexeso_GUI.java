@@ -44,6 +44,7 @@ public class Pexeso_GUI extends javax.swing.JFrame {
         int card = Pexeso_client.CurrentGame.getCard(card_id);
         
         SwingUtilities.invokeLater(new Runnable() {
+        @Override
         public void run() {
 
           Pexeso_client.CurrentGame.gameCards[card_id].cardLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/pictures/"+card+".jpg")));
@@ -53,6 +54,7 @@ public class Pexeso_GUI extends javax.swing.JFrame {
     public void turnCardBack(int card_id)
     { 
         SwingUtilities.invokeLater(new Runnable() {
+        @Override
         public void run() {
 
           Pexeso_client.CurrentGame.gameCards[card_id].cardLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/pictures/backend.jpg")));
@@ -67,6 +69,7 @@ public class Pexeso_GUI extends javax.swing.JFrame {
             Pexeso_client.CurrentGame.setp1Score(1 + Pexeso_client.CurrentGame.getP1Score());
             
             SwingUtilities.invokeLater(new Runnable() {
+                @Override
                 public void run() {
 
                     p1Value.setText(Pexeso_client.CurrentGame.getP1Score()+"");
@@ -78,6 +81,7 @@ public class Pexeso_GUI extends javax.swing.JFrame {
             Pexeso_client.CurrentGame.setp2Score(1 + Pexeso_client.CurrentGame.getP2Score());
             
             SwingUtilities.invokeLater(new Runnable() {
+                @Override
                 public void run() {
 
                     p2Value.setText(Pexeso_client.CurrentGame.getP2Score()+"");
@@ -170,6 +174,7 @@ public class Pexeso_GUI extends javax.swing.JFrame {
                                 
                                 
                                 SwingUtilities.invokeLater(new Runnable() {
+                                    @Override
                                     public void run() {
 
                                       GameStatus.setText("Opponents turn!");
@@ -1900,7 +1905,6 @@ public class Pexeso_GUI extends javax.swing.JFrame {
             if(Pexeso_client.CurrentGame.getState() != 1)
             {
                 comm.setExit(true);
-                comm.game_thread.interrupt();
                 panel2.setVisible(true);
                 panel3.setVisible(false);
                 Pexeso_client.CurrentGame = null;
@@ -1928,7 +1932,6 @@ public class Pexeso_GUI extends javax.swing.JFrame {
         comm.msgSender("E"+(char)(Pexeso_client.CurrentGame.getID()+'0'));
         comm.closeSocket();
         comm.setExit(true);
-        comm.game_thread.interrupt();
         
         System.exit(0);
     }//GEN-LAST:event_GameExitMouseClicked
@@ -2190,7 +2193,6 @@ public class Pexeso_GUI extends javax.swing.JFrame {
         comm.msgSender("E"+(char)(Pexeso_client.CurrentGame.getID()+'0'));
         Pexeso_client.CurrentGame = null;
         comm.setExit(true);
-        comm.game_thread.interrupt();
         
         LobbyStatus.setText("You left your current game");
         LobbyStatus.setVisible(true);        
