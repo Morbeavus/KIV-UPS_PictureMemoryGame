@@ -39,13 +39,19 @@ public class Communication_model implements Runnable
         this.hostIP = ip;
         this.nick = nick;
         this.msgID = 0;
-        try 
+        
+        int i = 1024;
+        
+        while(socket == null)
         {
-            socket = new DatagramSocket() ;
-        } 
-        catch (SocketException ex) 
-        {
-            Logger.getLogger(Communication_model.class.getName()).log(Level.SEVERE, null, ex);
+            try 
+            {
+                socket = new DatagramSocket(i) ;
+            } 
+            catch (SocketException ex) 
+            {
+               i++;
+            }
         }
     }
     
