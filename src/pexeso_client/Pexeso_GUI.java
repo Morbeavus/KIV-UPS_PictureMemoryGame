@@ -1833,6 +1833,8 @@ public class Pexeso_GUI extends javax.swing.JFrame {
             {
                 status_label.setText("Failed to connect!");
                 status_label.setVisible(true);
+                comm.closeSocket();
+                comm = null;
             }
         }
         catch( UnknownHostException | NumberFormatException e )
