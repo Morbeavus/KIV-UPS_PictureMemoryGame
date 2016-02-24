@@ -73,14 +73,17 @@ public class Communication_model implements Runnable
     {   
             int temp;
             int tries = 0;
+            String msg;
+            String hello = "Hello";
             try 
             {
                 while(isExit() == false)
                 { 
+                    msg =""+ Pexeso_client.CurrentPlayer.getID();
                     if(getToSend() != null)
                     {   
                         System.out.println("Comm thread going to send: "+ toSend);
-                        if(toSend.charAt(0) == 't')
+                        if(toSend.charAt(1) == 't')
                         {
                             sleep(2000);
                             Pexeso_client.mygui.turnCardBack(Pexeso_client.mygui.turns[0]);
@@ -99,7 +102,9 @@ public class Communication_model implements Runnable
                         else
                         {
                             sleep(10000);
-                            temp = msgSender("Hello");
+                            msg =""+ Pexeso_client.CurrentPlayer.getID();
+                            msg += hello;
+                            temp = msgSender(msg);
                             if(temp != 0)
                             {
                                 terminateGame();
@@ -109,7 +114,8 @@ public class Communication_model implements Runnable
                     }
                     else if(Pexeso_client.CurrentPlayer.isTurning() == false) /*asks for opponent's turns*/
                     {
-                        temp = msgSender("M"+(char)(Pexeso_client.CurrentGame.getID()+'0')+""+(char)(Pexeso_client.CurrentPlayer.getPosition()+'0'));
+                        msg +="M"+(char)(Pexeso_client.CurrentGame.getID()+'0')+""+(char)(Pexeso_client.CurrentPlayer.getPosition()+'0');
+                        temp = msgSender(msg);
                         
                         if(temp == 0)
                         {
@@ -176,7 +182,9 @@ public class Communication_model implements Runnable
                         else
                         {
                             sleep(10000);
-                            temp = msgSender("Hello");
+                            msg =""+ Pexeso_client.CurrentPlayer.getID();
+                            msg += hello;
+                            temp = msgSender(msg);
                             
                             terminateGame();
                             
@@ -184,7 +192,9 @@ public class Communication_model implements Runnable
                     }
                     else if(Pexeso_client.CurrentGame.getNick2() == null) /*tries to find opponent */
                     {
-                        temp = msgSender("s"+(char)(Pexeso_client.CurrentGame.getID()+'0'));
+                        
+                        msg += "s"+(char)(Pexeso_client.CurrentGame.getID()+'0');
+                        temp = msgSender(msg);
                         
                         if(temp == 0)
                         {
@@ -198,12 +208,16 @@ public class Communication_model implements Runnable
                     }
                     else /*connection refreshing*/
                     { 
-                        temp = msgSender("Hello");
+                        msg =""+ Pexeso_client.CurrentPlayer.getID();
+                        msg += hello;
+                        temp = msgSender(msg);
                         
                         if(temp != 0)
                         {
                             sleep(10000);
-                            temp = msgSender("Hello");
+                            msg =""+ Pexeso_client.CurrentPlayer.getID();
+                            msg += hello;
+                            temp = msgSender(msg);
                             if(temp != 0)
                             {
                                 terminateGame();

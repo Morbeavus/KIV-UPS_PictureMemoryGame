@@ -128,7 +128,7 @@ public class Pexeso_GUI extends javax.swing.JFrame {
         
         if(victory_state != 0 )
         {
-            comm.msgSender("E"+(char)(Pexeso_client.CurrentGame.getID()+'0'));
+            comm.msgSender((char)(Pexeso_client.CurrentPlayer.getID()+'0')+"E"+(char)(Pexeso_client.CurrentGame.getID()+'0'));
             Pexeso_client.CurrentGame.setState(3);
         }
         
@@ -145,7 +145,7 @@ public class Pexeso_GUI extends javax.swing.JFrame {
                 {
                     turns[Pexeso_client.CurrentGame.turnCounter] = card_id;
                     Pexeso_client.CurrentGame.turnCounter++;
-                    comm.setToSend("m"+(char)(card_id + '0')+""+(char)(Pexeso_client.CurrentGame.getID()+'0')+""+Pexeso_client.CurrentPlayer.getPosition()+""+Pexeso_client.CurrentGame.turnCounter);
+                    comm.setToSend((char)(Pexeso_client.CurrentPlayer.getID()+'0')+"m"+(char)(card_id + '0')+""+(char)(Pexeso_client.CurrentGame.getID()+'0')+""+Pexeso_client.CurrentPlayer.getPosition()+""+Pexeso_client.CurrentGame.turnCounter);
                     if(Pexeso_client.CurrentGame.turnCounter == 1)sleep(1000);
                     
                     if(comm.isMsgsent() == true)
@@ -185,7 +185,7 @@ public class Pexeso_GUI extends javax.swing.JFrame {
                                 sleep(4000);
                                 Pexeso_client.CurrentGame.turnCounter = 0;
                                 
-                                comm.setToSend("t"+(char)(Pexeso_client.CurrentGame.getID()+'0')+""+(Pexeso_client.CurrentPlayer.getPosition()));
+                                comm.setToSend((char)(Pexeso_client.CurrentPlayer.getID()+'0')+"t"+(char)(Pexeso_client.CurrentGame.getID()+'0')+""+(Pexeso_client.CurrentPlayer.getPosition()));
                                 comm.setMsgsent(false);
                                     
                             }
@@ -1880,10 +1880,10 @@ public class Pexeso_GUI extends javax.swing.JFrame {
         
         int temp;
         int i = 0;
-        String msg;
+        String msg = ""+(char)(Pexeso_client.CurrentPlayer.getID()+'0');
         Pexeso_client.CurrentGame = new Game(comm.getNick());
         
-        msg = Pexeso_client.CurrentGame.ConstructNGMsg(Pexeso_client.CurrentPlayer.getID());
+        msg += Pexeso_client.CurrentGame.ConstructNGMsg(Pexeso_client.CurrentPlayer.getID());
         temp = comm.msgSender(msg);
         if(temp == 0)
         {   
@@ -1929,7 +1929,9 @@ public class Pexeso_GUI extends javax.swing.JFrame {
     }//GEN-LAST:event_NewGameMouseClicked
 
     private void GameExitMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_GameExitMouseClicked
-        comm.msgSender("E"+(char)(Pexeso_client.CurrentGame.getID()+'0'));
+        String msg = ""+(char)(Pexeso_client.CurrentPlayer.getID()+'0');
+        msg += "E"+(char)(Pexeso_client.CurrentGame.getID()+'0');
+        comm.msgSender(msg);
         comm.closeSocket();
         comm.setExit(true);
         
@@ -2190,7 +2192,9 @@ public class Pexeso_GUI extends javax.swing.JFrame {
 
     private void LeaveGameMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_LeaveGameMouseClicked
         
-        comm.msgSender("E"+(char)(Pexeso_client.CurrentGame.getID()+'0'));
+        String msg = ""+(char)(Pexeso_client.CurrentPlayer.getID()+'0');
+        msg += "E"+(char)(Pexeso_client.CurrentGame.getID()+'0');
+        comm.msgSender(msg);
         Pexeso_client.CurrentGame = null;
         comm.setExit(true);
         
@@ -2218,7 +2222,7 @@ public class Pexeso_GUI extends javax.swing.JFrame {
         joinGameBox.removeAllItems();
         
         int x;
-        String msg = "r";
+        String msg = (char)(Pexeso_client.CurrentPlayer.getID()+'0')+"r";
         int temp;
         temp = comm.msgSender(msg);
         
@@ -2230,7 +2234,6 @@ public class Pexeso_GUI extends javax.swing.JFrame {
 
             for(int i = 0; i < x ; i++)
             {
-
                msg = gamesList[i].trim();
                joinGameBox.addItem(msg);
             }
@@ -2255,9 +2258,9 @@ public class Pexeso_GUI extends javax.swing.JFrame {
         System.out.println("Selected for connection: "+selected);
         player1 = selected.substring(2);
         
-        String msg = "j";
+        String msg = (char)(Pexeso_client.CurrentPlayer.getID()+'0')+"j";
         msg += selected.charAt(1);
-        msg += (char)(Pexeso_client.CurrentPlayer.getID()+'0');
+        msg += (char)(Pexeso_client.CurrentPlayer.getID()+'0');//TODO
         
         temp = comm.msgSender(msg);
         msg = comm.getLastMsg();
@@ -2269,8 +2272,8 @@ public class Pexeso_GUI extends javax.swing.JFrame {
                 cards[i] = new Card();
                 cards[i].setPic_id(msg.charAt(1 + i)-'0');
             }
-
-            msg = "i" + selected.charAt(1);
+            msg = ""+(char)(Pexeso_client.CurrentPlayer.getID()+'0');
+            msg += "i" + selected.charAt(1);
             comm.msgSender(msg);
             msg = comm.getLastMsg();
 
