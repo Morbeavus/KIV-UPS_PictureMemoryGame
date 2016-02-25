@@ -214,7 +214,7 @@ public class Communication_model implements Runnable
                         
                         if(temp != 0)
                         {
-                            sleep(10000);
+                            sleep(1000);
                             msg =""+ (char)(Pexeso_client.CurrentPlayer.getID()+'0');
                             msg += hello;
                             temp = msgSender(msg);
