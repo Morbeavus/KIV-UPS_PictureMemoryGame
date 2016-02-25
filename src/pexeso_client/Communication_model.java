@@ -79,7 +79,7 @@ public class Communication_model implements Runnable
             {
                 while(isExit() == false)
                 { 
-                    msg =""+ Pexeso_client.CurrentPlayer.getID();
+                    msg =""+ (char)(Pexeso_client.CurrentPlayer.getID()+'0');
                     if(getToSend() != null)
                     {   
                         System.out.println("Comm thread going to send: "+ toSend);
@@ -102,7 +102,7 @@ public class Communication_model implements Runnable
                         else
                         {
                             sleep(10000);
-                            msg =""+ Pexeso_client.CurrentPlayer.getID();
+                            msg =""+ (char)(Pexeso_client.CurrentPlayer.getID()+'0');
                             msg += hello;
                             temp = msgSender(msg);
                             if(temp != 0)
@@ -182,7 +182,7 @@ public class Communication_model implements Runnable
                         else
                         {
                             sleep(10000);
-                            msg =""+ Pexeso_client.CurrentPlayer.getID();
+                            msg =""+ (char)(Pexeso_client.CurrentPlayer.getID()+'0');
                             msg += hello;
                             temp = msgSender(msg);
                             
@@ -208,14 +208,14 @@ public class Communication_model implements Runnable
                     }
                     else /*connection refreshing*/
                     { 
-                        msg =""+ Pexeso_client.CurrentPlayer.getID();
+                        msg =""+ (char)(Pexeso_client.CurrentPlayer.getID()+'0');
                         msg += hello;
                         temp = msgSender(msg);
                         
                         if(temp != 0)
                         {
                             sleep(10000);
-                            msg =""+ Pexeso_client.CurrentPlayer.getID();
+                            msg =""+ (char)(Pexeso_client.CurrentPlayer.getID()+'0');
                             msg += hello;
                             temp = msgSender(msg);
                             if(temp != 0)
