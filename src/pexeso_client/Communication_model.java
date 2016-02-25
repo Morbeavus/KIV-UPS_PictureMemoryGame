@@ -14,6 +14,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.SwingUtilities;
 import static java.lang.Thread.sleep;
+import static java.lang.Thread.sleep;
+import static java.lang.Thread.sleep;
 
 /**
  *
@@ -303,22 +305,33 @@ public class Communication_model implements Runnable
     
     public String [] recieveGames(int count)
     {
-        String [] games = new String [count];
-                
+        String [] temp = new String [count];
+        int received = 0;        
         for(int i = 0 ; i < count; i++)
         {
-            games[i] = listen(2000);
-            
-            if(games[i].equals("wrong msg ID")) 
+            temp[i] = listen(2000);
+            received++;
+            if(temp[i].equals("wrong msg ID")) 
             {
                 i--;
             }
             
-            else if (games[i].equals("timeout"))
+            else if (temp[i].equals("timeout"))
             {
-                
+                received--;
             }
+            
+             
         }    
+        String [] games = new String [received];
+        
+        for(int i = 0; i <count;i++)
+        {
+            if(temp[i].equals("timeout") == false)
+            {
+                games[i] = temp[i];
+            }
+        }
         return games;
     }
     

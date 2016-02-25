@@ -146,12 +146,21 @@ public class Pexeso_GUI extends javax.swing.JFrame {
                     turns[Pexeso_client.CurrentGame.turnCounter] = card_id;
                     Pexeso_client.CurrentGame.turnCounter++;
                     comm.setToSend((char)(Pexeso_client.CurrentPlayer.getID()+'0')+"m"+(char)(card_id + '0')+""+(char)(Pexeso_client.CurrentGame.getID()+'0')+""+Pexeso_client.CurrentPlayer.getPosition()+""+Pexeso_client.CurrentGame.turnCounter);
-                    if(Pexeso_client.CurrentGame.turnCounter == 1)sleep(1000);
+                    while(comm.isMsgsent() == false)Thread.yield();
+                    //if(Pexeso_client.CurrentGame.turnCounter == 1)sleep(1000);
                     
                     if(comm.isMsgsent() == true)
                     {
-                        setIcon(card_id);
+                        SwingUtilities.invokeLater(new Runnable() {
+                                    @Override
+                                    public void run() {
+
+                                      setIcon(card_id);
+
+                                    }
+                                  });
                         
+                        //sleep(1000);
                         if(Pexeso_client.CurrentGame.turnCounter == 2)
                         {
                             if(Pexeso_client.CurrentGame.checkPairs(turns) == 1) 
@@ -1882,6 +1891,7 @@ public class Pexeso_GUI extends javax.swing.JFrame {
         
         int temp;
         int i = 0;
+        int waitTime = 0;
         String msg = ""+(char)(Pexeso_client.CurrentPlayer.getID()+'0');
         Pexeso_client.CurrentGame = new Game(comm.getNick());
         
@@ -1898,12 +1908,16 @@ public class Pexeso_GUI extends javax.swing.JFrame {
             t1 = new Thread(comm); 
             t1.start();
             
-            try {
-                sleep(10000);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(Pexeso_GUI.class.getName()).log(Level.SEVERE, null, ex);
+            while(Pexeso_client.CurrentGame.getState() != 1)
+            {
+                waitTime++;
+                if(waitTime == 20)break;
+                try {
+                sleep(1000);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(Pexeso_GUI.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
-            
             if(Pexeso_client.CurrentGame.getState() != 1)
             {
                 comm.setExit(true);
@@ -2234,7 +2248,7 @@ public class Pexeso_GUI extends javax.swing.JFrame {
             System.out.println("Going to receive "+x+" games");  
             gamesList = comm.recieveGames(x);        
 
-            for(int i = 0; i < x ; i++)
+            for(int i = 0; i < gamesList.length ; i++)
             {
                msg = gamesList[i].trim();
                joinGameBox.addItem(msg);
