@@ -13,6 +13,7 @@ import java.net.SocketException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.SwingUtilities;
+import static java.lang.Thread.sleep;
 
 /**
  *
@@ -72,7 +73,7 @@ public class Communication_model implements Runnable
     @Override
     public void run() 
     {   
-            int temp;
+            int send_state;
             int tries = 0;
             String msg;
             String hello = "ello";
@@ -93,9 +94,9 @@ public class Communication_model implements Runnable
                         }
                         
                         
-                        temp = msgSender(getToSend());
+                        send_state = msgSender(getToSend());
                         
-                        if(temp == 0)
+                        if(send_state == 0)
                         {
                             setToSend(null);
                             setMsgsent(true);
@@ -106,8 +107,8 @@ public class Communication_model implements Runnable
                             msg =""+ (char)(Pexeso_client.CurrentPlayer.getID()+'0');
                             msg+="H"+ (char)(Pexeso_client.CurrentGame.getID()+'0');
                             msg += hello;
-                            temp = msgSender(msg);
-                            if(temp != 0)terminateGame(0);
+                            send_state = msgSender(msg);
+                            if(send_state != 0)terminateGame(0);
                             else if(this.getLastMsg().charAt(1) == 'E')
                             {
                                 terminateGame(1);
@@ -117,9 +118,9 @@ public class Communication_model implements Runnable
                     else if(Pexeso_client.CurrentPlayer.isTurning() == false) /*asks for opponent's turns*/
                     {
                         msg +="M"+(char)(Pexeso_client.CurrentGame.getID()+'0')+""+(char)(Pexeso_client.CurrentPlayer.getPosition()+'0');
-                        temp = msgSender(msg);
+                        send_state = msgSender(msg);
                         
-                        if(temp == 0)
+                        if(send_state == 0)
                         {
                             if(lastMsg.charAt(2) == '1')
                             {
@@ -188,9 +189,9 @@ public class Communication_model implements Runnable
                             msg =""+ (char)(Pexeso_client.CurrentPlayer.getID()+'0');
                             msg+="H"+ (char)(Pexeso_client.CurrentGame.getID()+'0');
                             msg += hello;
-                            temp = msgSender(msg);
+                            send_state = msgSender(msg);
                             
-                            if(temp != 0)
+                            if(send_state != 0)
                             {
                                 terminateGame(0);
                             }
@@ -205,9 +206,9 @@ public class Communication_model implements Runnable
                     {
                         
                         msg += "s"+(char)(Pexeso_client.CurrentGame.getID()+'0');
-                        temp = msgSender(msg);
+                        send_state = msgSender(msg);
                         
-                        if(temp == 0)
+                        if(send_state == 0)
                         {
                             if( 47 < lastMsg.charAt(1) &&  lastMsg.charAt(1) < 58  ) /*basically asks if its number*/
                             {
@@ -222,26 +223,26 @@ public class Communication_model implements Runnable
                         msg =""+ (char)(Pexeso_client.CurrentPlayer.getID()+'0');
                         msg+="H"+ (char)(Pexeso_client.CurrentGame.getID()+'0');
                         msg += hello;
-                        temp = msgSender(msg);
+                        send_state = msgSender(msg);
                             
                         if(this.getLastMsg().charAt(1) == 'E')
                         {
                             terminateGame(1);
                         }
                         
-                        if(temp != 0)
+                        if(send_state != 0)
                         {
                             sleep(1000);
                             msg =""+ (char)(Pexeso_client.CurrentPlayer.getID()+'0');
                             msg+="H"+ (char)(Pexeso_client.CurrentGame.getID()+'0');
                             msg += hello;
-                            temp = msgSender(msg);
+                            send_state = msgSender(msg);
                             
                             if(this.getLastMsg().charAt(1) == 'E')
                             {
                                 terminateGame(1);
                             }
-                            else if(temp != 0)terminateGame(0);
+                            else if(send_state != 0)terminateGame(0);
                         }
                     }
                     sleep(2000);
