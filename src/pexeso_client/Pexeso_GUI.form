@@ -82,7 +82,7 @@
         </Property>
       </Properties>
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_CreateCodePre" type="java.lang.String" value="try{&#xd;&#xa;    loadUsers();&#xd;&#xa;}catch( Exception e )&#xd;&#xa;{&#xd;&#xa;    System.out.println(e) ;&#xd;&#xa;}"/>
+        <AuxValue name="JavaCodeGenerator_CreateCodePre" type="java.lang.String" value="try{&#xd;&#xa;    loadUsers();&#xd;&#xa;}catch(FileNotFoundException e )&#xd;&#xa;{&#xd;&#xa;    this.users = new Player[0];&#xd;&#xa;    System.out.println(e) ;&#xd;&#xa;}"/>
         <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="1"/>
       </AuxValues>
 

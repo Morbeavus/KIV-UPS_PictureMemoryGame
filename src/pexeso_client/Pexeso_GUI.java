@@ -229,14 +229,13 @@ public class Pexeso_GUI extends javax.swing.JFrame {
             System.out.println("Loaded: "+this.users.length+" users");
         }
         else return 2;
-        
         for(int j = 0; j < this.users.length ; j++)
         {
             data = sc.nextLine();
             temp = data.split(":");
             this.users[i] = new Player(temp[0],temp[1],temp[2]);
             i++;
-        }       
+        }
         return 0;
     }
     /**
@@ -332,8 +331,9 @@ public class Pexeso_GUI extends javax.swing.JFrame {
 
         try{
             loadUsers();
-        }catch( Exception e )
+        }catch(FileNotFoundException e )
         {
+            this.users = new Player[0];
             System.out.println(e) ;
         }
         panel1 = new javax.swing.JPanel();
