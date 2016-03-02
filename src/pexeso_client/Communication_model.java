@@ -81,6 +81,26 @@ public class Communication_model implements Runnable
         {
            MsgToSend = "";
            // System.out.println("noper");
+           if(msgsent == true)
+           {
+               try {
+                    sleep(4000);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(Pexeso_GUI.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        Pexeso_client.mygui.turnCardBack(Pexeso_client.mygui.turns[0]);
+                        Pexeso_client.mygui.turnCardBack(Pexeso_client.mygui.turns[1]); 
+                        msgsent = false;
+                        
+                        
+                    }
+                });
+               
+           }
            if(Pexeso_client.CurrentPlayer.isTurning() == false || Pexeso_client.CurrentGame.getState() != 1)
            {
                 receivedMsg = listen(10000);
@@ -179,7 +199,7 @@ public class Communication_model implements Runnable
                      }
                 }
             }
-           else Thread.yield();
+           else{ Thread.yield();}
         }
     }
 //  /*

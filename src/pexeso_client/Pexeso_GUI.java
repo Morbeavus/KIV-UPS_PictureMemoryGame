@@ -174,7 +174,7 @@ public class Pexeso_GUI extends javax.swing.JFrame {
                         else
                         {
                             
-                            Pexeso_client.CurrentPlayer.setTurning(false);
+                            
                             
                             
                             SwingUtilities.invokeLater(new Runnable() {
@@ -189,20 +189,9 @@ public class Pexeso_GUI extends javax.swing.JFrame {
                             
                             Pexeso_client.CurrentGame.turnCounter = 0;
                             temp = comm.msgSender((char)(Pexeso_client.CurrentPlayer.getID()+'0')+"t"+(char)(Pexeso_client.CurrentGame.getID()+'0')+""+(Pexeso_client.CurrentPlayer.getPosition()));
-//                                comm.setMsgsent(false);
-                            SwingUtilities.invokeLater(new Runnable() {
-                                @Override
-                                public void run() {
-                                    
-                                    Pexeso_client.mygui.turnCardBack(Pexeso_client.mygui.turns[0]);
-                                    Pexeso_client.mygui.turnCardBack(Pexeso_client.mygui.turns[1]); 
-                                    try {
-                                        sleep(4000);
-                                    } catch (InterruptedException ex) {
-                                        Logger.getLogger(Pexeso_GUI.class.getName()).log(Level.SEVERE, null, ex);
-                                    }
-                                }
-                            });
+                            comm.setMsgsent(true);
+                            Pexeso_client.CurrentPlayer.setTurning(false);       
+                            
 
                         }
                     }

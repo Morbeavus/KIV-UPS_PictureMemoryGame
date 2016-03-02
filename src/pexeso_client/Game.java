@@ -227,7 +227,7 @@ public class Game implements Runnable{
     
     public int getP2Score()
     {
-        return this.p1Score;
+        return this.p2Score;
     }
     
     public int getState()
