@@ -13,9 +13,6 @@ import java.net.SocketException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.SwingUtilities;
-import static java.lang.Thread.sleep;
-import static java.lang.Thread.sleep;
-import static java.lang.Thread.sleep;
 
 /**
  *
@@ -74,187 +71,303 @@ public class Communication_model implements Runnable
     
     @Override
     public void run() 
-    {   
-            int send_state;
-            int tries = 0;
-            String msg;
-            String hello = "ello";
-            try 
-            {
-                while(isExit() == false)
-                { 
-                    msg =""+ (char)(Pexeso_client.CurrentPlayer.getID()+'0');
-                    if(getToSend() != null)
-                    {   
-                        System.out.println("Comm thread going to send: "+ toSend);
-                        if(toSend.charAt(1) == 't')
-                        {
-                            sleep(2000);
-                            Pexeso_client.mygui.turnCardBack(Pexeso_client.mygui.turns[0]);
-                            Pexeso_client.mygui.turnCardBack(Pexeso_client.mygui.turns[1]);
-                            sleep(1000);
-                        }
-                        
-                        
-                        send_state = msgSender(getToSend());
-                        
-                        if(send_state == 0)
-                        {
-                            setToSend(null);
-                            setMsgsent(true);
-                        }
-                        else
-                        {
-                            sleep(10000);
-                            msg =""+ (char)(Pexeso_client.CurrentPlayer.getID()+'0');
-                            msg+="H"+ (char)(Pexeso_client.CurrentGame.getID()+'0');
-                            msg += hello;
-                            send_state = msgSender(msg);
-                            if(send_state != 0)terminateGame(0);
-                            else if(this.getLastMsg().charAt(1) == 'E')
-                            {
-                                terminateGame(1);
-                            }
-                        }
-                    }
-                    else if(Pexeso_client.CurrentPlayer.isTurning() == false) /*asks for opponent's turns*/
-                    {
-                        msg +="M"+(char)(Pexeso_client.CurrentGame.getID()+'0')+""+(char)(Pexeso_client.CurrentPlayer.getPosition()+'0');
-                        send_state = msgSender(msg);
-                        
-                        if(send_state == 0)
-                        {
-                            if(lastMsg.charAt(2) == '1')
-                            {
-                                if((1 + Pexeso_client.CurrentGame.turnCounter) == (int)(lastMsg.charAt(3)-'0'))
-                                {
-                                    Pexeso_client.mygui.setIcon(lastMsg.charAt(1)-'0');
-                                    Pexeso_client.mygui.turns[Pexeso_client.CurrentGame.turnCounter] = lastMsg.charAt(1)-'0';
-                                    Pexeso_client.CurrentGame.turnCounter++;
+    {
+        String receivedMsg;
+        String MsgToSend;
+        String hello = "ello";
+        int send_state;
+        
+        while(isExit() == false)
+        {
+           MsgToSend = "";
+           // System.out.println("noper");
+           if(Pexeso_client.CurrentPlayer.isTurning() == false || Pexeso_client.CurrentGame.getState() != 1)
+           {
+                receivedMsg = listen(10000);
 
-                                    if(Pexeso_client.CurrentGame.turnCounter == 2)
-                                    {
-                                        if(Pexeso_client.CurrentGame.checkPairs(Pexeso_client.mygui.turns) == 1)
-                                        {
-                                            Pexeso_client.mygui.GameStatus.setText("Opponent scored!");
-                                            Pexeso_client.CurrentGame.turnCounter = 0;
-                                            int opponentPos = Pexeso_client.CurrentPlayer.getPosition();
-                                            if(opponentPos == 1 )
-                                            {
-                                                opponentPos = 2;
-                                                Pexeso_client.mygui.increaseScore(opponentPos);
-                                                switch(Pexeso_client.mygui.checkVictory(opponentPos))
-                                                {
-                                                    case 1: Pexeso_client.mygui.GameStatus.setText("YOU LOST!"); Pexeso_client.CurrentGame.turnCounter = 2;Pexeso_client.CurrentPlayer.setTurning(false);break;
-                                                    case 2: Pexeso_client.mygui.GameStatus.setText("YOU WON!");Pexeso_client.CurrentGame.turnCounter = 2;Pexeso_client.CurrentPlayer.setTurning(false);break;
-                                                    case 3: Pexeso_client.mygui.GameStatus.setText("Stalemate!");Pexeso_client.CurrentGame.turnCounter = 2;Pexeso_client.CurrentPlayer.setTurning(false);break;
-                                                }
-                                            }
-                                            else
-                                            {
-                                                opponentPos = 1;
-                                                Pexeso_client.mygui.increaseScore(opponentPos);
-                                                switch(Pexeso_client.mygui.checkVictory(opponentPos))
-                                                {
-                                                    case 1: Pexeso_client.mygui.GameStatus.setText("YOU LOST!");Pexeso_client.CurrentGame.turnCounter = 2;Pexeso_client.CurrentPlayer.setTurning(false);break;
-                                                    case 2: Pexeso_client.mygui.GameStatus.setText("YOU WON!");Pexeso_client.CurrentGame.turnCounter = 2;Pexeso_client.CurrentPlayer.setTurning(false);break;
-                                                    case 3: Pexeso_client.mygui.GameStatus.setText("Stalemate!");Pexeso_client.CurrentGame.turnCounter = 2;Pexeso_client.CurrentPlayer.setTurning(false);break;
-                                                }
-                                            }
-                                        }
-                                        else
-                                        {
-                                            SwingUtilities.invokeLater(new Runnable() {
-                                            @Override
-                                            public void run() {
-
-                                              Pexeso_client.mygui.GameStatus.setText("Your turn!");
-                                            }
-                                            });
-                                            
-                                            sleep(4000);
-                                            Pexeso_client.mygui.turnCardBack(Pexeso_client.mygui.turns[0]);
-                                            Pexeso_client.mygui.turnCardBack(Pexeso_client.mygui.turns[1]);                                          
-                                            
-                                            
-                                            Pexeso_client.CurrentGame.turnCounter = 0;
-                                            Pexeso_client.CurrentPlayer.setTurning(true);                  
-                                        }
-                                    }
-                                }
-                            }
-                            else if(lastMsg.charAt(2) == 'E') terminateGame(1);
-                        }
-                        else
-                        {
-                            sleep(10000);
-                            msg =""+ (char)(Pexeso_client.CurrentPlayer.getID()+'0');
-                            msg+="H"+ (char)(Pexeso_client.CurrentGame.getID()+'0');
-                            msg += hello;
-                            send_state = msgSender(msg);
-                            
-                            if(send_state != 0)
-                            {
-                                terminateGame(0);
-                            }
-                            else if(this.getLastMsg().charAt(1) == 'E')
-                            {
-                                terminateGame(1);
-                            }
-                            
-                        }
-                    }
-                    else if(Pexeso_client.CurrentGame.getNick2() == null) /*tries to find opponent */
+                if(receivedMsg.equals("timeout") == true && Pexeso_client.CurrentGame != null)
+                {
+                    MsgToSend =""+ (char)(Pexeso_client.CurrentPlayer.getID()+'0');
+                    MsgToSend+="H"+ (char)(Pexeso_client.CurrentGame.getID()+'0');
+                    MsgToSend += hello;
+                    send_state = msgSender(MsgToSend);
+                    if(send_state != 0)terminateGame(0);
+                    else if(this.getLastMsg().charAt(1) == 'E')
                     {
-                        
-                        msg += "s"+(char)(Pexeso_client.CurrentGame.getID()+'0');
-                        send_state = msgSender(msg);
-                        
-                        if(send_state == 0)
-                        {
-                            if( 47 < lastMsg.charAt(1) &&  lastMsg.charAt(1) < 58  ) /*basically asks if its number*/
-                            {
-                                Pexeso_client.CurrentGame.setNick2(lastMsg.substring(2,2+lastMsg.charAt(1)-'0'));
-                                Pexeso_client.CurrentGame.setState(1);
-                            }
-                            
-                        }
+                         terminateGame(1);
                     }
-                    else /*connection refreshing*/
-                    { 
-                        msg =""+ (char)(Pexeso_client.CurrentPlayer.getID()+'0');
-                        msg+="H"+ (char)(Pexeso_client.CurrentGame.getID()+'0');
-                        msg += hello;
-                        send_state = msgSender(msg);
-                            
-                        if(this.getLastMsg().charAt(1) == 'E')
-                        {
-                            terminateGame(1);
-                        }
-                        
-                        if(send_state != 0)
-                        {
-                            sleep(1000);
-                            msg =""+ (char)(Pexeso_client.CurrentPlayer.getID()+'0');
-                            msg+="H"+ (char)(Pexeso_client.CurrentGame.getID()+'0');
-                            msg += hello;
-                            send_state = msgSender(msg);
-                            
-                            if(this.getLastMsg().charAt(1) == 'E')
-                            {
-                                terminateGame(1);
-                            }
-                            else if(send_state != 0)terminateGame(0);
-                        }
-                    }
-                    sleep(2000);
                 }
-            } 
-            catch (InterruptedException ex) 
-            {
-                    Logger.getLogger(Communication_model.class.getName()).log(Level.SEVERE, null, ex);
+                else if(receivedMsg.charAt(2) == 'm')
+                {
+                       
+                     if((1 + Pexeso_client.CurrentGame.turnCounter) == (int)(receivedMsg.charAt(6)-'0'))
+                     {
+                         Pexeso_client.mygui.setIcon(receivedMsg.charAt(3)-'0');
+                         Pexeso_client.mygui.turns[Pexeso_client.CurrentGame.turnCounter] = receivedMsg.charAt(3)-'0';
+                         Pexeso_client.CurrentGame.turnCounter++;
+
+                         if(Pexeso_client.CurrentGame.turnCounter == 2)
+                         {
+                             if(Pexeso_client.CurrentGame.checkPairs(Pexeso_client.mygui.turns) == 1)
+                             {
+                                 Pexeso_client.mygui.GameStatus.setText("Opponent scored!");
+                                 Pexeso_client.CurrentGame.turnCounter = 0;
+                                 int opponentPos = Pexeso_client.CurrentPlayer.getPosition();
+                                 if(opponentPos == 1 )
+                                 {
+                                     opponentPos = 2;
+                                     Pexeso_client.mygui.increaseScore(opponentPos);
+                                     switch(Pexeso_client.mygui.checkVictory(opponentPos))
+                                     {
+                                         case 1: Pexeso_client.mygui.GameStatus.setText("YOU LOST!"); Pexeso_client.CurrentGame.turnCounter = 2;Pexeso_client.CurrentPlayer.setTurning(false);break;
+                                         case 2: Pexeso_client.mygui.GameStatus.setText("YOU WON!");Pexeso_client.CurrentGame.turnCounter = 2;Pexeso_client.CurrentPlayer.setTurning(false);break;
+                                         case 3: Pexeso_client.mygui.GameStatus.setText("Stalemate!");Pexeso_client.CurrentGame.turnCounter = 2;Pexeso_client.CurrentPlayer.setTurning(false);break;
+                                     }
+                                 }
+                                 else
+                                 {
+                                     opponentPos = 1;
+                                     Pexeso_client.mygui.increaseScore(opponentPos);
+                                     switch(Pexeso_client.mygui.checkVictory(opponentPos))
+                                     {
+                                         case 1: Pexeso_client.mygui.GameStatus.setText("YOU LOST!");Pexeso_client.CurrentGame.turnCounter = 2;Pexeso_client.CurrentPlayer.setTurning(false);break;
+                                         case 2: Pexeso_client.mygui.GameStatus.setText("YOU WON!");Pexeso_client.CurrentGame.turnCounter = 2;Pexeso_client.CurrentPlayer.setTurning(false);break;
+                                         case 3: Pexeso_client.mygui.GameStatus.setText("Stalemate!");Pexeso_client.CurrentGame.turnCounter = 2;Pexeso_client.CurrentPlayer.setTurning(false);break;
+                                     }
+                                 }
+                             }
+                             else
+                             {
+                                 SwingUtilities.invokeLater(new Runnable() {
+                                 @Override
+                                 public void run() {
+
+                                   Pexeso_client.mygui.GameStatus.setText("Your turn!");
+                                 }
+                                 });
+
+                                 try {
+                                     sleep(4000);
+                                 } catch (InterruptedException ex) {
+                                     Logger.getLogger(Communication_model.class.getName()).log(Level.SEVERE, null, ex);
+                                 }
+                                 Pexeso_client.mygui.turnCardBack(Pexeso_client.mygui.turns[0]);
+                                 Pexeso_client.mygui.turnCardBack(Pexeso_client.mygui.turns[1]);                                          
+
+
+                                 Pexeso_client.CurrentGame.turnCounter = 0;
+                                 Pexeso_client.CurrentPlayer.setTurning(true);                  
+                             }
+                         }
+                     }
+
+                }
+                else if(receivedMsg.charAt(2) == 't')
+                {
+
+                }
+                else if(receivedMsg.charAt(1) == 'E')
+                {
+                     terminateGame(1);                
+                }
+                else if(receivedMsg.charAt(1) == 'j')
+                {
+                     if( 47 < receivedMsg.charAt(2) &&  receivedMsg.charAt(2) < 58  ) /*basically asks if its number*/
+                     {
+                         Pexeso_client.CurrentGame.setNick2(receivedMsg.substring(3,3+(int)(receivedMsg.charAt(2)-'0')));
+                         Pexeso_client.CurrentGame.setState(1);
+                     }
+                }
             }
+           else Thread.yield();
+        }
     }
+//  /*
+//  * old run part of comm
+//  */  
+//    @Override
+//    public void run() 
+//    {   
+//            int send_state;
+//            int tries = 0;
+//            String receivedMsg;
+//            String hello = "ello";
+//            try 
+//            {
+//                while(isExit() == false)
+//                { 
+//                    receivedMsg =""+ (char)(Pexeso_client.CurrentPlayer.getID()+'0');
+//                    if(getToSend() != null)
+//                    {   
+//                        System.out.println("Comm thread going to send: "+ toSend);
+//                        if(toSend.charAt(1) == 't')
+//                        {
+//                            sleep(2000);
+//                            Pexeso_client.mygui.turnCardBack(Pexeso_client.mygui.turns[0]);
+//                            Pexeso_client.mygui.turnCardBack(Pexeso_client.mygui.turns[1]);
+//                            sleep(1000);
+//                        }
+//                        
+//                        
+//                        send_state = msgSender(getToSend());
+//                        
+//                        if(send_state == 0)
+//                        {
+//                            setToSend(null);
+//                            setMsgsent(true);
+//                        }
+//                        else
+//                        {
+//                            sleep(10000);
+//                            receivedMsg =""+ (char)(Pexeso_client.CurrentPlayer.getID()+'0');
+//                            receivedMsg+="H"+ (char)(Pexeso_client.CurrentGame.getID()+'0');
+//                            receivedMsg += hello;
+//                            send_state = msgSender(receivedMsg);
+//                            if(send_state != 0)terminateGame(0);
+//                            else if(this.getLastMsg().charAt(1) == 'E')
+//                            {
+//                                terminateGame(1);
+//                            }
+//                        }
+//                    }
+//                    else if(Pexeso_client.CurrentPlayer.isTurning() == false) /*asks for opponent's turns*/
+//                    {
+//                        receivedMsg +="M"+(char)(Pexeso_client.CurrentGame.getID()+'0')+""+(char)(Pexeso_client.CurrentPlayer.getPosition()+'0');
+//                        send_state = msgSender(receivedMsg);
+//                        
+//                        if(send_state == 0)
+//                        {
+//                            if(lastMsg.charAt(2) == '1')
+//                            {
+//                                if((1 + Pexeso_client.CurrentGame.turnCounter) == (int)(lastMsg.charAt(3)-'0'))
+//                                {
+//                                    Pexeso_client.mygui.setIcon(lastMsg.charAt(1)-'0');
+//                                    Pexeso_client.mygui.turns[Pexeso_client.CurrentGame.turnCounter] = lastMsg.charAt(1)-'0';
+//                                    Pexeso_client.CurrentGame.turnCounter++;
+//
+//                                    if(Pexeso_client.CurrentGame.turnCounter == 2)
+//                                    {
+//                                        if(Pexeso_client.CurrentGame.checkPairs(Pexeso_client.mygui.turns) == 1)
+//                                        {
+//                                            Pexeso_client.mygui.GameStatus.setText("Opponent scored!");
+//                                            Pexeso_client.CurrentGame.turnCounter = 0;
+//                                            int opponentPos = Pexeso_client.CurrentPlayer.getPosition();
+//                                            if(opponentPos == 1 )
+//                                            {
+//                                                opponentPos = 2;
+//                                                Pexeso_client.mygui.increaseScore(opponentPos);
+//                                                switch(Pexeso_client.mygui.checkVictory(opponentPos))
+//                                                {
+//                                                    case 1: Pexeso_client.mygui.GameStatus.setText("YOU LOST!"); Pexeso_client.CurrentGame.turnCounter = 2;Pexeso_client.CurrentPlayer.setTurning(false);break;
+//                                                    case 2: Pexeso_client.mygui.GameStatus.setText("YOU WON!");Pexeso_client.CurrentGame.turnCounter = 2;Pexeso_client.CurrentPlayer.setTurning(false);break;
+//                                                    case 3: Pexeso_client.mygui.GameStatus.setText("Stalemate!");Pexeso_client.CurrentGame.turnCounter = 2;Pexeso_client.CurrentPlayer.setTurning(false);break;
+//                                                }
+//                                            }
+//                                            else
+//                                            {
+//                                                opponentPos = 1;
+//                                                Pexeso_client.mygui.increaseScore(opponentPos);
+//                                                switch(Pexeso_client.mygui.checkVictory(opponentPos))
+//                                                {
+//                                                    case 1: Pexeso_client.mygui.GameStatus.setText("YOU LOST!");Pexeso_client.CurrentGame.turnCounter = 2;Pexeso_client.CurrentPlayer.setTurning(false);break;
+//                                                    case 2: Pexeso_client.mygui.GameStatus.setText("YOU WON!");Pexeso_client.CurrentGame.turnCounter = 2;Pexeso_client.CurrentPlayer.setTurning(false);break;
+//                                                    case 3: Pexeso_client.mygui.GameStatus.setText("Stalemate!");Pexeso_client.CurrentGame.turnCounter = 2;Pexeso_client.CurrentPlayer.setTurning(false);break;
+//                                                }
+//                                            }
+//                                        }
+//                                        else
+//                                        {
+//                                            SwingUtilities.invokeLater(new Runnable() {
+//                                            @Override
+//                                            public void run() {
+//
+//                                              Pexeso_client.mygui.GameStatus.setText("Your turn!");
+//                                            }
+//                                            });
+//                                            
+//                                            sleep(4000);
+//                                            Pexeso_client.mygui.turnCardBack(Pexeso_client.mygui.turns[0]);
+//                                            Pexeso_client.mygui.turnCardBack(Pexeso_client.mygui.turns[1]);                                          
+//                                            
+//                                            
+//                                            Pexeso_client.CurrentGame.turnCounter = 0;
+//                                            Pexeso_client.CurrentPlayer.setTurning(true);                  
+//                                        }
+//                                    }
+//                                }
+//                            }
+//                            else if(lastMsg.charAt(2) == 'E') terminateGame(1);
+//                        }
+//                        else
+//                        {
+//                            sleep(10000);
+//                            receivedMsg =""+ (char)(Pexeso_client.CurrentPlayer.getID()+'0');
+//                            receivedMsg+="H"+ (char)(Pexeso_client.CurrentGame.getID()+'0');
+//                            receivedMsg += hello;
+//                            send_state = msgSender(receivedMsg);
+//                            
+//                            if(send_state != 0)
+//                            {
+//                                terminateGame(0);
+//                            }
+//                            else if(this.getLastMsg().charAt(1) == 'E')
+//                            {
+//                                terminateGame(1);
+//                            }
+//                            
+//                        }
+//                    }
+//                    else if(Pexeso_client.CurrentGame.getNick2() == null) /*tries to find opponent */
+//                    {
+//                        
+//                        receivedMsg += "s"+(char)(Pexeso_client.CurrentGame.getID()+'0');
+//                        send_state = msgSender(receivedMsg);
+//                        
+//                        if(send_state == 0)
+//                        {
+//                            if( 47 < lastMsg.charAt(1) &&  lastMsg.charAt(1) < 58  ) /*basically asks if its number*/
+//                            {
+//                                Pexeso_client.CurrentGame.setNick2(lastMsg.substring(2,2+lastMsg.charAt(1)-'0'));
+//                                Pexeso_client.CurrentGame.setState(1);
+//                            }
+//                            
+//                        }
+//                    }
+//                    else /*connection refreshing*/
+//                    { 
+//                        receivedMsg =""+ (char)(Pexeso_client.CurrentPlayer.getID()+'0');
+//                        receivedMsg+="H"+ (char)(Pexeso_client.CurrentGame.getID()+'0');
+//                        receivedMsg += hello;
+//                        send_state = msgSender(receivedMsg);
+//                            
+//                        if(this.getLastMsg().charAt(1) == 'E')
+//                        {
+//                            terminateGame(1);
+//                        }
+//                        
+//                        if(send_state != 0)
+//                        {
+//                            sleep(1000);
+//                            receivedMsg =""+ (char)(Pexeso_client.CurrentPlayer.getID()+'0');
+//                            receivedMsg+="H"+ (char)(Pexeso_client.CurrentGame.getID()+'0');
+//                            receivedMsg += hello;
+//                            send_state = msgSender(receivedMsg);
+//                            
+//                            if(this.getLastMsg().charAt(1) == 'E')
+//                            {
+//                                terminateGame(1);
+//                            }
+//                            else if(send_state != 0)terminateGame(0);
+//                        }
+//                    }
+//                    sleep(2000);
+//                }
+//            } 
+//            catch (InterruptedException ex) 
+//            {
+//                    Logger.getLogger(Communication_model.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+//    }
     
     private String listen(int time)
     {  
@@ -278,9 +391,9 @@ public class Communication_model implements Runnable
 
              // Print the response
              msg = (new String(recvPacket.getData()));
-             System.out.println(msg);
+             System.out.println("Server: |"+msg+"|" );
 
-             if((int)msg.charAt(0)-48 < 2)return "wrong msg ID";
+             //if((int)(msg.charAt(0)-48) < 2)return "wrong msg ID";
         }
         catch( Exception e )
         {
@@ -383,7 +496,9 @@ public class Communication_model implements Runnable
      */
     public int msgSender(String msg)
     {
-        for(int i = 0; i < 3; i++)
+        int tries = 3;
+        
+        for(int i = 0; i < tries; i++)
         {
             if(sendMsg(msg) == 0)
             {
