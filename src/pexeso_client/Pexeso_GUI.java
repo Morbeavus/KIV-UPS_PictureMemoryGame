@@ -173,10 +173,6 @@ public class Pexeso_GUI extends javax.swing.JFrame {
                         }
                         else
                         {
-                            
-                            
-                            
-                            
                             SwingUtilities.invokeLater(new Runnable() {
                                 @Override
                                 public void run() {
@@ -185,14 +181,10 @@ public class Pexeso_GUI extends javax.swing.JFrame {
                                     
                                 }
                             });
-                            
-                            
                             Pexeso_client.CurrentGame.turnCounter = 0;
                             temp = comm.msgSender((char)(Pexeso_client.CurrentPlayer.getID()+'0')+"t"+(char)(Pexeso_client.CurrentGame.getID()+'0')+""+(Pexeso_client.CurrentPlayer.getPosition()));
                             comm.setMsgsent(true);
                             Pexeso_client.CurrentPlayer.setTurning(false);       
-                            
-
                         }
                     }
                 }
@@ -216,17 +208,23 @@ public class Pexeso_GUI extends javax.swing.JFrame {
         if(sc.hasNextInt())
         {
             x = sc.nextInt();
-            sc.nextLine();
+            if(sc.hasNextLine())
+            {
+                sc.nextLine();
+            }
             this.users = new Player[x];
             System.out.println("Loaded: "+this.users.length+" users");
         }
         else return 2;
         for(int j = 0; j < this.users.length ; j++)
         {
-            data = sc.nextLine();
-            temp = data.split(":");
-            this.users[i] = new Player(temp[0],temp[1],temp[2]);
-            i++;
+            if(sc.hasNextLine())
+            {
+                data = sc.nextLine();
+                temp = data.split(":");
+                this.users[i] = new Player(temp[0],temp[1],temp[2]);
+                i++;
+            }
         }
         return 0;
     }
@@ -344,6 +342,7 @@ public class Pexeso_GUI extends javax.swing.JFrame {
         status_label = new javax.swing.JLabel();
         portHint = new javax.swing.JLabel();
         nickHint = new javax.swing.JLabel();
+        nickHint1 = new javax.swing.JLabel();
         panel2 = new javax.swing.JPanel();
         lobbyMPanel = new javax.swing.JPanel();
         youarelogged = new javax.swing.JLabel();
@@ -357,6 +356,8 @@ public class Pexeso_GUI extends javax.swing.JFrame {
         LobbyStatus = new javax.swing.JLabel();
         loadGameBox = new javax.swing.JComboBox<>();
         joinGameBox = new javax.swing.JComboBox<>();
+        jLabel64 = new javax.swing.JLabel();
+        jLabel65 = new javax.swing.JLabel();
         panel3 = new javax.swing.JPanel();
         gameboard = new javax.swing.JPanel();
         jLabel0 = new javax.swing.JLabel();
@@ -524,9 +525,11 @@ public class Pexeso_GUI extends javax.swing.JFrame {
         status_label.setEnabled(false);
         status_label.setVisible(false);
 
-        portHint.setText("1025-65534");
+        portHint.setText("1026-65534");
 
         nickHint.setText("Maximum of 10 not special characters");
+
+        nickHint1.setText("Minimum of 1 character");
 
         javax.swing.GroupLayout LoginLayout = new javax.swing.GroupLayout(Login);
         Login.setLayout(LoginLayout);
@@ -555,23 +558,30 @@ public class Pexeso_GUI extends javax.swing.JFrame {
                                     .addComponent(player_name)
                                     .addComponent(server_ip, javax.swing.GroupLayout.DEFAULT_SIZE, 81, Short.MAX_VALUE))
                                 .addGap(18, 18, 18)
-                                .addComponent(nickHint))))
+                                .addGroup(LoginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(nickHint1)
+                                    .addComponent(nickHint)))))
                     .addGroup(LoginLayout.createSequentialGroup()
                         .addGap(103, 103, 103)
                         .addComponent(login)
                         .addGap(131, 131, 131)
                         .addComponent(status_label)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(376, Short.MAX_VALUE))
         );
         LoginLayout.setVerticalGroup(
             LoginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(LoginLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(LoginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(nick)
-                    .addComponent(player_name, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(nickHint))
-                .addGap(18, 18, 18)
+                .addGroup(LoginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(LoginLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(LoginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(nick)
+                            .addComponent(player_name, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(LoginLayout.createSequentialGroup()
+                        .addComponent(nickHint)
+                        .addGap(1, 1, 1)
+                        .addComponent(nickHint1)))
+                .addGap(17, 17, 17)
                 .addGroup(LoginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(server)
                     .addComponent(server_ip, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -611,7 +621,7 @@ public class Pexeso_GUI extends javax.swing.JFrame {
             .addGroup(panel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(welcomePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 230, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 231, Short.MAX_VALUE)
                 .addComponent(Login, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -678,6 +688,10 @@ public class Pexeso_GUI extends javax.swing.JFrame {
 
         joinGameBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Game 1", "Game 2", "Game 3", "Game 4" }));
 
+        jLabel64.setText("Load/saved game not implemeted");
+
+        jLabel65.setText("Press refresh to get actual new games then choose one from drop down menu!");
+
         javax.swing.GroupLayout lobbyMPanelLayout = new javax.swing.GroupLayout(lobbyMPanel);
         lobbyMPanel.setLayout(lobbyMPanelLayout);
         lobbyMPanelLayout.setHorizontalGroup(
@@ -685,29 +699,40 @@ public class Pexeso_GUI extends javax.swing.JFrame {
             .addGroup(lobbyMPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(lobbyMPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(lobbyMPanelLayout.createSequentialGroup()
+                        .addGroup(lobbyMPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, lobbyMPanelLayout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(backToLogin)
+                                .addGap(18, 18, 18)
+                                .addComponent(exit1))
+                            .addGroup(lobbyMPanelLayout.createSequentialGroup()
+                                .addComponent(youarelogged)
+                                .addGap(18, 18, 18)
+                                .addComponent(lobbyNick)
+                                .addGap(0, 619, Short.MAX_VALUE)))
+                        .addContainerGap())
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, lobbyMPanelLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(backToLogin)
-                        .addGap(18, 18, 18)
-                        .addComponent(exit1))
-                    .addGroup(lobbyMPanelLayout.createSequentialGroup()
-                        .addComponent(youarelogged)
-                        .addGap(18, 18, 18)
                         .addGroup(lobbyMPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lobbyNick)
-                            .addComponent(LobbyStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 525, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, lobbyMPanelLayout.createSequentialGroup()
-                .addContainerGap(362, Short.MAX_VALUE)
-                .addGroup(lobbyMPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(loadGameBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(LoadGame, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(joinGameBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(JoinGame, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(Refreshlist, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(NewGame, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(344, 344, 344))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, lobbyMPanelLayout.createSequentialGroup()
+                                .addGroup(lobbyMPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(loadGameBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(LoadGame, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(joinGameBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(JoinGame, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(Refreshlist, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(NewGame, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addGap(344, 344, 344))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, lobbyMPanelLayout.createSequentialGroup()
+                                .addComponent(jLabel64)
+                                .addGap(303, 303, 303))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, lobbyMPanelLayout.createSequentialGroup()
+                                .addComponent(jLabel65)
+                                .addGap(189, 189, 189))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, lobbyMPanelLayout.createSequentialGroup()
+                                .addComponent(LobbyStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 525, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(112, 112, 112))))))
         );
         lobbyMPanelLayout.setVerticalGroup(
             lobbyMPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -718,19 +743,23 @@ public class Pexeso_GUI extends javax.swing.JFrame {
                     .addComponent(lobbyNick))
                 .addGap(71, 71, 71)
                 .addComponent(NewGame)
-                .addGap(67, 67, 67)
+                .addGap(47, 47, 47)
+                .addComponent(jLabel64)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(loadGameBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(LoadGame)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 111, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 117, Short.MAX_VALUE)
+                .addComponent(jLabel65)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(joinGameBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(JoinGame)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(Refreshlist)
-                .addGap(71, 71, 71)
+                .addGap(78, 78, 78)
                 .addComponent(LobbyStatus)
-                .addGap(44, 44, 44)
+                .addGap(37, 37, 37)
                 .addGroup(lobbyMPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(exit1)
                     .addComponent(backToLogin))
@@ -1629,7 +1658,7 @@ public class Pexeso_GUI extends javax.swing.JFrame {
                         .addComponent(LeaveGame)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(GameExit)))
-                .addContainerGap(22, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1751,96 +1780,118 @@ public class Pexeso_GUI extends javax.swing.JFrame {
         nick = player_name.getText();
         nick_l = (char)(nick.length()+ '0'); /*nick length*/ 
         
-        for(int i = 0; i < users.length; i++)
+        if(nick.length() < 1 || nick.length() > 10)
         {
-            if (users[i].getNick().equals(nick)) 
+            if(nick.length() < 1)
             {
-                Pexeso_client.CurrentPlayer = users[i];
-            }
-        }        
-        
-        System.out.println("Number of saved players:"+users.length);
-        
-        if( Pexeso_client.CurrentPlayer == null) 
-        {
-            Pexeso_client.CurrentPlayer = new Player(nick);
-        }
-        
-        if(port_in.getText().equals("") == false && isNumeric(port_in.getText()) == true)
-        {
-            port = Integer.parseInt(port_in.getText());
-        }
-        
-        try
-        {
-            ip = InetAddress.getByName(server_ip.getText());
-            
-            comm = new Communication_model(port, ip, nick);
-            
-            if(Pexeso_client.CurrentPlayer.getID() == -1)//new user
-            {
-                LobbyStatus.setText("WELCOME NEW USER!");
-                
-                temp = comm.msgSender("N"+nick_l+nick);
-                if(temp == 0)
-                { 
-                    id = (comm.getLastMsg().charAt(1)-'0');
-                    System.out.println("new player IDchar: "+comm.getLastMsg().charAt(1)+""+(comm.getLastMsg().charAt(1)-'0'));
-                    Pexeso_client.CurrentPlayer.setID(id);
-                    users = Pexeso_client.CurrentPlayer.newPlayer(users,Pexeso_client.CurrentPlayer);
-                    
-                    File dir = new File("/saves/"+Pexeso_client.CurrentPlayer.getNick());
-                    dir.mkdir();
-                    loadGameBox.removeAllItems();
-                    LoadGame.setVisible(false);
-                }
-            }
-            else // old user
-            {
-                LobbyStatus.setText("WELCOME BACK "+Pexeso_client.CurrentPlayer.getNick()+"!");
-                temp = comm.msgSender("C"+(char)(Pexeso_client.CurrentPlayer.getID()+'0'));     
-            }
-                    
-            if(temp == 0)
-            {   
-                System.out.println("Succefull login as: "+nick+" on server IP: "+ip+" Port: "+port+ " PID: "+Pexeso_client.CurrentPlayer.getID());
-                
-                try
-                {
-                    loaded_games = Game.loadGames(Pexeso_client.CurrentPlayer.getNick());
-                    if(loaded_games != null)
-                    {
-                        loadGameBox.removeAllItems();
-                        for(int i = 0; i < loaded_games.length ; i++)
-                        {
-                           loadGameBox.addItem(loaded_games[i].getID()+""+loaded_games[i].getNick1());
-                           LoadGame.setVisible(true);
-                        }
-                    }
-                }catch( Exception e )
-                {
-                    LoadGame.setVisible(false);
-                    System.out.println(e) ;
-                }
-                
-                lobbyNick.setText(nick);
-                lobbyNick.setVisible(true);
-                LobbyStatus.setVisible(true);
-                panel1.setVisible(false);
-                panel2.setVisible(true);
-                status_label.setVisible(false);
+                status_label.setText("Your nick is too short!");
+                status_label.setVisible(true);
             }
             else
-            {
-                status_label.setText("Failed to connect!");
+            { 
+                status_label.setText("Your nick is too long!");
                 status_label.setVisible(true);
-                comm.closeSocket();
-                comm = null;
             }
         }
-        catch( UnknownHostException | NumberFormatException e )
+        else
         {
-           System.out.println( e ) ;
+            for(int i = 0; i < users.length; i++)
+            {
+                if (users[i].getNick().equals(nick)) 
+                {
+                    Pexeso_client.CurrentPlayer = users[i];
+                }
+            }        
+
+            System.out.println("Number of saved players:"+users.length);
+
+            if( Pexeso_client.CurrentPlayer == null) 
+            {
+                Pexeso_client.CurrentPlayer = new Player(nick);
+            }
+
+            if(port_in.getText().equals("") == false && isNumeric(port_in.getText()) == true)
+            {
+                
+                port = Integer.parseInt(port_in.getText());
+                if( 1025 > port || port > 65535 )
+                {
+                    status_label.setText("Port number is not from expected interval!");
+                    return;
+                }
+            }
+
+            try
+            {
+                ip = InetAddress.getByName(server_ip.getText());
+
+                comm = new Communication_model(port, ip, nick);
+
+                if(Pexeso_client.CurrentPlayer.getID() == -1)//new user
+                {
+                    LobbyStatus.setText("WELCOME NEW USER!");
+
+                    temp = comm.msgSender("N"+nick_l+nick);
+                    if(temp == 0)
+                    { 
+                        id = (comm.getLastMsg().charAt(1)-'0');
+                        System.out.println("new player IDchar: "+comm.getLastMsg().charAt(1)+""+(comm.getLastMsg().charAt(1)-'0'));
+                        Pexeso_client.CurrentPlayer.setID(id);
+                        users = Pexeso_client.CurrentPlayer.newPlayer(users,Pexeso_client.CurrentPlayer);
+
+                        File dir = new File("/saves/"+Pexeso_client.CurrentPlayer.getNick());
+                        dir.mkdir();
+                        loadGameBox.removeAllItems();
+                        LoadGame.setVisible(false);
+                    }
+                }
+                else // old user
+                {
+                    LobbyStatus.setText("WELCOME BACK "+Pexeso_client.CurrentPlayer.getNick()+"!");
+                    temp = comm.msgSender("C"+(char)(Pexeso_client.CurrentPlayer.getID()+'0'));     
+                }
+
+                if(temp == 0)
+                {   
+                    System.out.println("Succefull login as: "+nick+" on server IP: "+ip+" Port: "+port+ " PID: "+Pexeso_client.CurrentPlayer.getID());
+
+                    try
+                    {
+                        loaded_games = Game.loadGames(Pexeso_client.CurrentPlayer.getNick());
+                        if(loaded_games != null)
+                        {
+                            loadGameBox.removeAllItems();
+                            for(int i = 0; i < loaded_games.length ; i++)
+                            {
+                               loadGameBox.addItem(loaded_games[i].getID()+""+loaded_games[i].getNick1());
+                               LoadGame.setVisible(true);
+                            }
+                        }
+                    }catch( Exception e )
+                    {
+                        LoadGame.setVisible(false);
+                        System.out.println(e) ;
+                    }
+
+                    lobbyNick.setText(nick);
+                    lobbyNick.setVisible(true);
+                    LobbyStatus.setVisible(true);
+                    panel1.setVisible(false);
+                    panel2.setVisible(true);
+                    status_label.setVisible(false);
+                }
+                else
+                {
+                    status_label.setText("Failed to connect!");
+                    status_label.setVisible(true);
+                    comm.closeSocket();
+                    comm = null;
+                }
+            }
+            catch( UnknownHostException | NumberFormatException e )
+            {
+               System.out.println( e ) ;
+            }
         }
     }//GEN-LAST:event_loginMouseClicked
 
@@ -1903,9 +1954,9 @@ public class Pexeso_GUI extends javax.swing.JFrame {
             while(Pexeso_client.CurrentGame.getState() != 1)
             {
                 waitTime++;
-                if(waitTime == 20)break;
+                if(waitTime == 40)break;
                 try {
-                sleep(1000);
+                sleep(500);
                 } catch (InterruptedException ex) {
                     Logger.getLogger(Pexeso_GUI.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -2302,6 +2353,7 @@ public class Pexeso_GUI extends javax.swing.JFrame {
             p1Value.setText(Pexeso_client.CurrentGame.getP1Score()+"");
             p2Value.setText(Pexeso_client.CurrentGame.getP2Score()+"");
             Pexeso_client.CurrentGame.setState(1);
+            GameStatus.setText("Opponents turn!");
             panel2.setVisible(false);
             panel3.setVisible(true);
             
@@ -2437,6 +2489,8 @@ public class Pexeso_GUI extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel61;
     private javax.swing.JLabel jLabel62;
     private javax.swing.JLabel jLabel63;
+    private javax.swing.JLabel jLabel64;
+    private javax.swing.JLabel jLabel65;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
@@ -2450,6 +2504,7 @@ public class Pexeso_GUI extends javax.swing.JFrame {
     private javax.swing.JButton login;
     private javax.swing.JLabel nick;
     private javax.swing.JLabel nickHint;
+    private javax.swing.JLabel nickHint1;
     public javax.swing.JLabel p1Name;
     public javax.swing.JLabel p1Score;
     public javax.swing.JLabel p1Value;
